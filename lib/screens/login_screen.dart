@@ -1,7 +1,12 @@
+import 'dart:async';
+
+import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/custom_text_form_field.dart';
+import 'package:ewaste/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -12,7 +17,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController(text: '');
-
   TextEditingController passwordController = TextEditingController(text: '');
 
   bool hidden = true;
@@ -20,6 +24,42 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    // LOGIN HANDLE
+    handleLogin() async {
+      setState(() {
+        isLoading = true;
+      });
+
+      if (await authProvider.login(
+        email: emailController.text,
+        password: passwordController.text,
+      )) {
+        Navigator.pushNamed(context, '/main');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: redTextColor,
+            content: Text(
+              'Gagal Login!',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+
+      // GO TO MAIN SCREEN
+      // Timer(Duration(seconds: 3), () {
+      //   Navigator.pushNamed(context, '/main');
+      // });
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+
+    // HIDDEN PASSWORD
     passwordHidden() async {
       setState(() {
         hidden = !hidden;
@@ -175,8 +215,16 @@ class _LoginScreenState extends State<LoginScreen> {
         child: CustomButton(
           text: 'Masuk',
           color: primaryColor,
-          press: () {},
+          press: handleLogin,
         ),
+      );
+    }
+
+    // BUTTON LOGIN
+    Widget buttonLoading() {
+      return Container(
+        margin: EdgeInsets.only(top: 60),
+        child: LoadingButton(),
       );
     }
 
@@ -221,7 +269,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 textLogin(),
                 emailInput(),
                 passwordInput(),
-                buttonLogin(),
+                isLoading ? buttonLoading() : buttonLogin(),
                 footer(),
               ],
             ),

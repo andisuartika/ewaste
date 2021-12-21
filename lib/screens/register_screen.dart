@@ -1,7 +1,10 @@
+import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/custom_text_form_field.dart';
+import 'package:ewaste/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -25,9 +28,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
     passwordHidden() async {
       setState(() {
         hidden = !hidden;
+      });
+    }
+
+    // HANDLE REGISTER
+    handleRegister() async {
+      setState(() {
+        isLoading = true;
+      });
+
+      if (await authProvider.register(
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+      )) {
+        Navigator.pushNamed(context, '/main');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: redTextColor,
+            content: Text(
+              'Registrasi Gagal!',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+
+      setState(() {
+        isLoading = false;
       });
     }
 
@@ -242,8 +276,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: CustomButton(
           text: 'Registrasi',
           color: primaryColor,
-          press: () {},
+          press: handleRegister,
         ),
+      );
+    }
+
+    // BUTTON REGISTER
+    Widget buttonLoading() {
+      return Container(
+        margin: EdgeInsets.only(top: 35),
+        child: LoadingButton(),
       );
     }
 
@@ -290,7 +332,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 emailInput(),
                 passwordInput(),
                 confirmPassword(),
-                buttonRegister(),
+                isLoading ? buttonLoading() : buttonRegister(),
                 footer(),
               ],
             ),

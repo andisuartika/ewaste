@@ -8,6 +8,7 @@ Color primaryDarkColor = Color(0xFF117660);
 Color secondaryColor = Color(0xFF2CB17F);
 Color primaryTextColor = Color(0xFF29313E);
 Color greenTextColor = Color(0xFF09323B);
+Color redTextColor = Color(0xFFEB5757);
 Color secondaryTextColor = Color(0xFF728196);
 Color hintTextColor = Color(0xFF728196).withOpacity(0.5);
 Color backgorundColor = Color(0xFFF6F6F6);

@@ -4,6 +4,7 @@ import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/custom_text_form_field.dart';
 import 'package:ewaste/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -114,7 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: CustomTextFormField(
           title: 'Nama',
           hint: 'Masukkan Nama',
-          icon: 'assets/icon_nama.png',
+          icon: 'assets/icon_nama.svg',
           controller: nameController,
         ),
       );
@@ -127,7 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: CustomTextFormField(
           title: 'Email',
           hint: 'Masukkan Email',
-          icon: 'assets/icon_email.png',
+          icon: 'assets/icon_email.svg',
           controller: emailController,
         ),
       );
@@ -162,8 +163,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Center(
                 child: Row(
                   children: [
-                    Image.asset(
-                      'assets/icon_password.png',
+                    SvgPicture.asset(
+                      'assets/icon_password.svg',
                       width: 20,
                     ),
                     SizedBox(
@@ -185,10 +186,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     GestureDetector(
                       onTap: passwordHidden,
-                      child: Image.asset(
+                      child: SvgPicture.asset(
                         hidden
-                            ? 'assets/icon_password_eye_hidden.png'
-                            : 'assets/icon_password_eye.png',
+                            ? 'assets/icon_password_eye_hidden.svg'
+                            : 'assets/icon_password_eye.svg',
                         width: 18,
                       ),
                     ),

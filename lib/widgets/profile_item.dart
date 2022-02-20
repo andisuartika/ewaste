@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme.dart';
 
@@ -22,7 +23,7 @@ class ProfileItem extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
-            Image.asset(
+            SvgPicture.asset(
               icon,
               width: 20,
             ),
@@ -38,8 +39,8 @@ class ProfileItem extends StatelessWidget {
                 ),
               ),
             ),
-            Image.asset(
-              'assets/icon_arrow_right.png',
+            SvgPicture.asset(
+              'assets/icon_arrow_right.svg',
               width: 20,
             ),
           ],

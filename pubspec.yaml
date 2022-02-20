@@ -39,6 +39,8 @@ dependencies:
   provider: ^6.0.1
   flutter_typeahead: ^3.2.4
   intl: ^0.17.0
+  flutter_svg: ^1.0.3
+  carousel_slider: ^4.0.0
 
 dev_dependencies:
   flutter_test:

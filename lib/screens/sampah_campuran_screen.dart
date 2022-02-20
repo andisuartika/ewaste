@@ -204,7 +204,7 @@ class _SampahCampuranScreenState extends State<SampahCampuranScreen> {
         child: CustomTextFormTabungan(
           title: 'Sampah',
           hint: 'Jumlah Sampah',
-          icon: 'assets/icon_ts_campuran.png',
+          icon: 'assets/icon_ts_campuran.svg',
           controller: campuranController,
         ),
       );

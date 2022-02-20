@@ -209,7 +209,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Organik',
           hint: 'Jumlah Sampah Organik',
-          icon: 'assets/icon_ts_organik.png',
+          icon: 'assets/icon_ts_organik.svg',
           controller: organikController,
         ),
       );
@@ -222,7 +222,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Plastik',
           hint: 'Jumlah Sampah Plastik',
-          icon: 'assets/icon_ts_plastik.png',
+          icon: 'assets/icon_ts_plastik.svg',
           controller: plastikController,
         ),
       );
@@ -235,7 +235,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Kertas',
           hint: 'Jumlah Sampah Kertas',
-          icon: 'assets/icon_ts_kertas.png',
+          icon: 'assets/icon_ts_kertas.svg',
           controller: kertasController,
         ),
       );
@@ -248,7 +248,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Besi',
           hint: 'Jumlah Sampah Besi',
-          icon: 'assets/icon_ts_besi.png',
+          icon: 'assets/icon_ts_besi.svg',
           controller: organikController,
         ),
       );
@@ -261,7 +261,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Pecah belah',
           hint: 'Jumlah Sampah Pecah belah',
-          icon: 'assets/icon_ts_kaca.png',
+          icon: 'assets/icon_ts_kaca.svg',
           controller: organikController,
         ),
       );

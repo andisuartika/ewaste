@@ -1,7 +1,11 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/screens/detail_category_screen.dart';
 import 'package:ewaste/theme.dart';
+import 'package:ewaste/widgets/article_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -11,6 +15,19 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel user = authProvider.user;
+
+    final List<String> bannerList = [
+      'assets/content_slider_1.png',
+      'assets/content_slider_1.png',
+      'assets/content_slider_1.png',
+    ];
+
+    final List<String> articleList = [
+      'https://images.unsplash.com/photo-1525695230005-efd074980869?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
+      'https://images.unsplash.com/photo-1533629046790-addefc28951e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+      'https://images.unsplash.com/photo-1528323273322-d81458248d40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1229&q=80',
+      'https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    ];
 
     // HEADER
     Widget header() {
@@ -78,6 +95,57 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
+    // SHOW BOTTOM SHEET INFO
+    void showBottomSheet() => showModalBottomSheet(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+          ),
+          context: context,
+          builder: (context) => Container(
+            height: 150,
+            padding: EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 30,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icon_info.svg',
+                      width: 24,
+                      color: primaryColor,
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Text(
+                      'Tentang Poin',
+                      style: greenTextStyle.copyWith(
+                        fontSize: 14,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Point yang berhasil kamu kumpulkan dari hasil menabung sampah dapat kamu tarik melalui bank atau e-wallet yang disediakan E-Waste.',
+                  style: secondaryTextStyle.copyWith(
+                    fontSize: 12,
+                    fontWeight: regular,
+                  ),
+                  textAlign: TextAlign.justify,
+                )
+              ],
+            ),
+          ),
+        );
+
     // CONTAINER SALDO
     Widget saldo() {
       return Container(
@@ -105,7 +173,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Points kamu',
+                      'Poin kamu',
                       style: whiteTextStyle.copyWith(
                         fontSize: 14,
                         fontWeight: regular,
@@ -113,16 +181,8 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: 18,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/icon_more.png'),
-                        ),
-                      ),
-                    ),
+                    onTap: showBottomSheet,
+                    child: SvgPicture.asset('assets/icon_info.svg'),
                   )
                 ],
               ),
@@ -130,7 +190,7 @@ class HomeScreen extends StatelessWidget {
                 height: 5,
               ),
               Text(
-                user.alamat == null ? "0" : user.points.toString(),
+                user.points == null ? "0" : user.points.toString(),
                 style: whiteTextStyle.copyWith(
                   fontSize: 30,
                   fontWeight: semiBold,
@@ -190,7 +250,12 @@ class HomeScreen extends StatelessWidget {
               children: [
                 // ORGANIK
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailCategoryScreen(),
+                    ),
+                  ),
                   child: Column(
                     children: [
                       Container(
@@ -352,6 +417,49 @@ class HomeScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(left: 30),
               child: Text(
+                'Event menarik',
+                style: darkGreenTextStyle.copyWith(
+                  fontSize: 12,
+                  fontWeight: semiBold,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  // height: 145,
+                  aspectRatio: 2.5,
+                  enlargeCenterPage: true,
+                  autoPlay: true,
+                ),
+                items: bannerList
+                    .map(
+                      (item) => Container(
+                        child: Center(
+                          child: Image.asset(item, fit: BoxFit.cover),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // ARTICLE
+    Widget article() {
+      return Container(
+        margin: EdgeInsets.all(30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Text(
                 'Info yang bisa kamu baca',
                 style: darkGreenTextStyle.copyWith(
                   fontSize: 12,
@@ -360,46 +468,16 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 5,
+              height: 15,
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 30,
-                  ),
-                  Container(
-                    width: 335,
-                    height: 145,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage('assets/content_slider_1.png'),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  Container(
-                    width: 335,
-                    height: 145,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage('assets/content_slider_2.png'),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                ],
-              ),
-            ),
+            Column(
+              children: [
+                ArticleItem(img: articleList[0]),
+                ArticleItem(img: articleList[1]),
+                ArticleItem(img: articleList[2]),
+                ArticleItem(img: articleList[3]),
+              ],
+            )
           ],
         ),
       );
@@ -409,9 +487,18 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         children: [
           header(),
-          saldo(),
-          jenisSampah(),
-          slider(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  saldo(),
+                  jenisSampah(),
+                  slider(),
+                  article(),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

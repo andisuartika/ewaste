@@ -118,7 +118,7 @@ class ProfileScreen extends StatelessWidget {
               height: 5,
             ),
             ProfileItem(
-              icon: 'assets/icon_edit_profile.png',
+              icon: 'assets/icon_edit_profile.svg',
               title: 'Ubah Profile',
               press: () {},
             ),
@@ -127,7 +127,7 @@ class ProfileScreen extends StatelessWidget {
               color: secondaryTextColor.withOpacity(0.5),
             ),
             ProfileItem(
-              icon: 'assets/icon_edit_password.png',
+              icon: 'assets/icon_edit_password.svg',
               title: 'Ubah Password',
               press: () {},
             ),
@@ -162,7 +162,7 @@ class ProfileScreen extends StatelessWidget {
               height: 5,
             ),
             ProfileItem(
-              icon: 'assets/icon_playstore.png',
+              icon: 'assets/icon_playstore.svg',
               title: 'Versi Aplikasi',
               press: () {},
             ),
@@ -171,7 +171,7 @@ class ProfileScreen extends StatelessWidget {
               color: secondaryTextColor.withOpacity(0.5),
             ),
             ProfileItem(
-              icon: 'assets/icon_panduan.png',
+              icon: 'assets/icon_panduan.svg',
               title: 'Panduan E-Waste',
               press: () {},
             ),
@@ -180,7 +180,7 @@ class ProfileScreen extends StatelessWidget {
               color: secondaryTextColor.withOpacity(0.5),
             ),
             ProfileItem(
-              icon: 'assets/icon_snk.png',
+              icon: 'assets/icon_snk.svg',
               title: 'Syarat dan Ketentuan',
               press: () {},
             ),
@@ -189,7 +189,7 @@ class ProfileScreen extends StatelessWidget {
               color: secondaryTextColor.withOpacity(0.5),
             ),
             ProfileItem(
-              icon: 'assets/icon_bantuan.png',
+              icon: 'assets/icon_bantuan.svg',
               title: 'Pusat Bantuan',
               press: () {},
             ),

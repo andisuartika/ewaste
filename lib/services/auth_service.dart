@@ -4,7 +4,7 @@ import 'package:ewaste/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  String baseUrl = 'https://waste.my.id/api';
+  String baseUrl = 'https://wastebali.com/api';
 
   Future<UserModel> register({
     required String name,

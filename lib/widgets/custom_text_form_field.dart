@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme.dart';
 
@@ -43,7 +44,7 @@ class CustomTextFormField extends StatelessWidget {
           child: Center(
             child: Row(
               children: [
-                Image.asset(
+                SvgPicture.asset(
                   icon,
                   width: 20,
                 ),

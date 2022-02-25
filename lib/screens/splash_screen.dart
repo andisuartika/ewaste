@@ -1,7 +1,11 @@
 import 'dart:async';
 
+import 'package:ewaste/providers/article_provider.dart';
+import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -13,11 +17,28 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushNamed(context, '/welcome');
-    });
-
+    cekLogin();
     super.initState();
+    Provider.of<ArticleProvider>(context, listen: false).getArticles();
+  }
+
+  cekLogin() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool islogin = prefs.getBool('isLogin') ?? false;
+    String? token = prefs.getString('token');
+    print(token);
+
+    // Get user Data
+    if (islogin == true) {
+      print('login true');
+      await Provider.of<AuthProvider>(context, listen: false).getUser(token);
+    }
+
+    Timer(Duration(seconds: 3), () {
+      islogin
+          ? Navigator.pushNamed(context, '/main')
+          : Navigator.pushNamed(context, '/welcome');
+    });
   }
 
   @override

@@ -52,7 +52,7 @@ class _MainScrennState extends State<MainScrenn> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/sampah');
+                    Navigator.pushNamed(context, '/qr-scan');
                   },
                   child: Row(
                     children: [
@@ -82,7 +82,9 @@ class _MainScrennState extends State<MainScrenn> {
                   thickness: 1,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/cari-nasabah');
+                  },
                   child: Row(
                     children: [
                       SvgPicture.asset(
@@ -133,87 +135,96 @@ class _MainScrennState extends State<MainScrenn> {
           shape: CircularNotchedRectangle(),
           notchMargin: 12,
           clipBehavior: Clip.antiAlias,
-          child: BottomNavigationBar(
-            backgroundColor: whiteColor,
-            currentIndex: pageProvider.currentIndex,
-            onTap: (value) {
-              print(value);
-              pageProvider.currentIndex = value;
-            },
-            type: BottomNavigationBarType.fixed,
-            items: [
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: EdgeInsets.only(
-                    top: 20,
-                    bottom: 10,
+          child: Theme(
+            data: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: whiteColor,
+              currentIndex: pageProvider.currentIndex,
+              onTap: (value) {
+                if (value != 2) {
+                  setState(() {
+                    pageProvider.currentIndex = value;
+                  });
+                }
+              },
+              type: BottomNavigationBarType.fixed,
+              items: [
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icon_home.svg',
+                      width: 21,
+                      color: pageProvider.currentIndex == 0
+                          ? primaryColor
+                          : Color(0xFF728196),
+                    ),
                   ),
-                  child: SvgPicture.asset(
-                    'assets/icon_home.svg',
-                    width: 21,
-                    color: pageProvider.currentIndex == 0
-                        ? primaryColor
-                        : Color(0xFF728196),
-                  ),
+                  label: 'Beranda',
                 ),
-                label: 'Beranda',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: EdgeInsets.only(
-                    top: 20,
-                    bottom: 10,
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icon_riwayat.svg',
+                      width: 20,
+                      color: pageProvider.currentIndex == 1
+                          ? primaryColor
+                          : Color(0xFF728196),
+                    ),
                   ),
-                  child: SvgPicture.asset(
-                    'assets/icon_riwayat.svg',
-                    width: 20,
-                    color: pageProvider.currentIndex == 1
-                        ? primaryColor
-                        : Color(0xFF728196),
-                  ),
+                  label: 'Riwayat',
                 ),
-                label: 'Riwayat',
-              ),
-              BottomNavigationBarItem(
-                icon: SizedBox(),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: EdgeInsets.only(
-                    top: 20,
-                    bottom: 10,
-                  ),
-                  child: SvgPicture.asset(
-                    'assets/icon_pesan.svg',
-                    width: 22,
-                    color: pageProvider.currentIndex == 3
-                        ? primaryColor
-                        : Color(0xFF728196),
-                  ),
+                BottomNavigationBarItem(
+                  icon: SizedBox(),
+                  label: '',
                 ),
-                label: 'Pesan',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: EdgeInsets.only(
-                    top: 20,
-                    bottom: 10,
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icon_pesan.svg',
+                      width: 22,
+                      color: pageProvider.currentIndex == 3
+                          ? primaryColor
+                          : Color(0xFF728196),
+                    ),
                   ),
-                  child: SvgPicture.asset(
-                    'assets/icon_profile.svg',
-                    width: 18,
-                    color: pageProvider.currentIndex == 4
-                        ? primaryColor
-                        : Color(0xFF728196),
-                  ),
+                  label: 'Pesan',
                 ),
-                label: 'Profile',
-              ),
-            ],
-            selectedItemColor: primaryColor,
-            selectedLabelStyle: greenTextStyle.copyWith(fontSize: 13),
-            unselectedLabelStyle: secondaryTextStyle.copyWith(fontSize: 12),
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icon_profile.svg',
+                      width: 18,
+                      color: pageProvider.currentIndex == 4
+                          ? primaryColor
+                          : Color(0xFF728196),
+                    ),
+                  ),
+                  label: 'Profile',
+                ),
+              ],
+              selectedItemColor: primaryColor,
+              selectedLabelStyle: greenTextStyle.copyWith(fontSize: 13),
+              unselectedLabelStyle: secondaryTextStyle.copyWith(fontSize: 12),
+            ),
           ),
         ),
       );

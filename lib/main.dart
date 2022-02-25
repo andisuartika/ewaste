@@ -1,9 +1,19 @@
+import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/page_provider.dart';
+import 'package:ewaste/providers/slider_provider.dart';
+import 'package:ewaste/screens/cari_nasabah_screen.dart';
 import 'package:ewaste/screens/home/input_sampah_screen.dart';
 import 'package:ewaste/screens/home/main_screen.dart';
 import 'package:ewaste/screens/konfirmasi_iuran_sampah_screen.dart';
 import 'package:ewaste/screens/konfirmasi_tabungan_screen.dart';
+import 'package:ewaste/screens/profile/panduan_aplikasi_screen.dart';
+import 'package:ewaste/screens/profile/pusat_bantuan_screen.dart';
+import 'package:ewaste/screens/profile/syarat_ketentuan_screen.dart';
+import 'package:ewaste/screens/profile/ubah_password_screen.dart';
+import 'package:ewaste/screens/profile/ubah_profile_screen.dart';
+import 'package:ewaste/screens/profile/versi_aplikasi_screen.dart';
+import 'package:ewaste/screens/qr_screen.dart';
 import 'package:ewaste/screens/sampah_campuran_screen.dart';
 import 'package:ewaste/screens/sampah_terpilah_screen.dart';
 import 'package:ewaste/screens/login_screen.dart';
@@ -30,6 +40,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => PageProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ArticleProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SliderProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -44,6 +60,14 @@ class MyApp extends StatelessWidget {
           '/sampah-campuran': (context) => SampahCampuranScreen(),
           '/konfirmasi-tabungan': (context) => KonfirmasiTabunganScreen(),
           '/konfirmasi-sampah': (context) => KonfirmasiIuranSampahScreen(),
+          '/ubah-profile': (context) => UbahProfileScreen(),
+          '/ubah-password': (context) => UbahPasswordScreen(),
+          '/versi-aplikasi': (context) => VersiAplikasiScreen(),
+          '/panduan-aplikasi': (context) => PanduanAplikasiScren(),
+          '/syarat-ketentuan': (context) => SyaratdanKetentuanScreen(),
+          '/pusat-bantuan': (context) => PusatBantuanScreen(),
+          '/qr-scan': (context) => QrScreen(),
+          '/cari-nasabah': (context) => CariNasabahScreen(),
         },
       ),
     );

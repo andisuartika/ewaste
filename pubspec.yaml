@@ -41,6 +41,14 @@ dependencies:
   intl: ^0.17.0
   flutter_svg: ^1.0.3
   carousel_slider: ^4.0.0
+  flutter_swiper_null_safety: ^1.0.2
+  shared_preferences: ^2.0.13
+  image_picker: ^0.8.4+9
+  path_provider: ^2.0.8
+  iconsax: ^0.0.8
+  url_launcher: ^6.0.20
+  qr_code_scanner: ^0.7.0
+  webview_flutter: ^3.0.1
 
 dev_dependencies:
   flutter_test:

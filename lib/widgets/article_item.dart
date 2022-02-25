@@ -1,14 +1,15 @@
+import 'package:ewaste/models/article_model.dart';
+import 'package:ewaste/screens/webview_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../theme.dart';
 
 class ArticleItem extends StatelessWidget {
-  final String img;
-  final String title;
-  final String desc;
-  const ArticleItem(
-      {Key? key, required this.img, this.title = '', this.desc = ''})
-      : super(key: key);
+  final ArticleModel article;
+  const ArticleItem({
+    Key? key,
+    required this.article,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,19 +39,21 @@ class ArticleItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Kerajinan unik dari barang bekas.',
+                    article.title.toString(),
                     style: primaryTextStyle.copyWith(
                       fontSize: 12,
                       fontWeight: medium,
+                      height: 1.2,
                     ),
                   ),
                   SizedBox(height: 5),
                   Expanded(
                     child: Text(
-                      'Beberapa kerajinan ini bisa kamu buat dirumah dengan mudah, yuk dicoba dengan bahan yang mudah kamu temui dirumah dan pastinya berguna banget buat kamu',
+                      article.desc.toString(),
                       style: secondaryTextStyle.copyWith(
                         fontSize: 10,
                         fontWeight: light,
+                        height: 1.2,
                       ),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
@@ -58,7 +61,17 @@ class ArticleItem extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WebViewScreen(
+                            title: article.title.toString(),
+                            url: article.url.toString(),
+                          ),
+                        ),
+                      );
+                    },
                     child: Text(
                       'Baca selengkapnya..',
                       style: greenTextStyle.copyWith(
@@ -80,7 +93,7 @@ class ArticleItem extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
-                image: NetworkImage(img),
+                image: NetworkImage(article.image.toString()),
                 fit: BoxFit.cover,
               ),
             ),

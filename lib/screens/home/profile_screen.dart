@@ -1,19 +1,48 @@
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/widgets/custom_button.dart';
+import 'package:ewaste/widgets/loading_button.dart';
 import 'package:ewaste/widgets/profile_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../theme.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel user = authProvider.user;
+
+    bool isLoading = false;
+
+    // LOGOUT HANDLE
+    handleLogout() async {
+      setState(() {
+        isLoading = true;
+      });
+
+      if (await authProvider.logout(user.token)) {
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: redTextColor,
+            content: Text(
+              'Gagal Logout!',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+    }
 
     // HEADER
     Widget header() {
@@ -120,7 +149,9 @@ class ProfileScreen extends StatelessWidget {
             ProfileItem(
               icon: 'assets/icon_edit_profile.svg',
               title: 'Ubah Profile',
-              press: () {},
+              press: () {
+                Navigator.pushNamed(context, '/ubah-profile');
+              },
             ),
             Divider(
               thickness: 1,
@@ -128,8 +159,10 @@ class ProfileScreen extends StatelessWidget {
             ),
             ProfileItem(
               icon: 'assets/icon_edit_password.svg',
-              title: 'Ubah Password',
-              press: () {},
+              title: 'Ganti Kata sandi',
+              press: () {
+                Navigator.pushNamed(context, '/ubah-password');
+              },
             ),
           ],
         ),
@@ -164,7 +197,9 @@ class ProfileScreen extends StatelessWidget {
             ProfileItem(
               icon: 'assets/icon_playstore.svg',
               title: 'Versi Aplikasi',
-              press: () {},
+              press: () {
+                Navigator.pushNamed(context, '/versi-aplikasi');
+              },
             ),
             Divider(
               thickness: 1,
@@ -173,7 +208,9 @@ class ProfileScreen extends StatelessWidget {
             ProfileItem(
               icon: 'assets/icon_panduan.svg',
               title: 'Panduan E-Waste',
-              press: () {},
+              press: () {
+                Navigator.pushNamed(context, '/panduan-aplikasi');
+              },
             ),
             Divider(
               thickness: 1,
@@ -182,7 +219,9 @@ class ProfileScreen extends StatelessWidget {
             ProfileItem(
               icon: 'assets/icon_snk.svg',
               title: 'Syarat dan Ketentuan',
-              press: () {},
+              press: () {
+                Navigator.pushNamed(context, '/syarat-ketentuan');
+              },
             ),
             Divider(
               thickness: 1,
@@ -191,7 +230,9 @@ class ProfileScreen extends StatelessWidget {
             ProfileItem(
               icon: 'assets/icon_bantuan.svg',
               title: 'Pusat Bantuan',
-              press: () {},
+              press: () {
+                Navigator.pushNamed(context, '/pusat-bantuan');
+              },
             ),
           ],
         ),
@@ -205,11 +246,16 @@ class ProfileScreen extends StatelessWidget {
         child: CustomButton(
           text: 'Keluar',
           color: primaryColor,
-          press: () {
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/login', (route) => false);
-          },
+          press: handleLogout,
         ),
+      );
+    }
+
+    // BUTTON LOADING
+    Widget buttonLoading() {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+        child: LoadingButton(),
       );
     }
 
@@ -226,7 +272,7 @@ class ProfileScreen extends StatelessWidget {
                   height: 12,
                 ),
                 tentang(),
-                buttonLogout(),
+                isLoading ? buttonLoading() : buttonLogout(),
               ],
             ),
           ),

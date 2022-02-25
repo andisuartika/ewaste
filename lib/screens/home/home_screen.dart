@@ -1,33 +1,40 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ewaste/faker/slider_faker.dart';
+import 'package:ewaste/models/slider_model.dart';
 import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/screens/detail_category_screen.dart';
+import 'package:ewaste/screens/webview_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/article_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List<SliderModel>? bannerList;
+  @override
+  void initState() {
+    // TODO: implement initState
+    setState(() {
+      bannerList = slidersFaker;
+    });
+
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel user = authProvider.user;
-
-    final List<String> bannerList = [
-      'assets/content_slider_1.png',
-      'assets/content_slider_1.png',
-      'assets/content_slider_1.png',
-    ];
-
-    final List<String> articleList = [
-      'https://images.unsplash.com/photo-1525695230005-efd074980869?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-      'https://images.unsplash.com/photo-1533629046790-addefc28951e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-      'https://images.unsplash.com/photo-1528323273322-d81458248d40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1229&q=80',
-      'https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-    ];
+    ArticleProvider articleProvider = Provider.of<ArticleProvider>(context);
 
     // HEADER
     Widget header() {
@@ -152,7 +159,7 @@ class HomeScreen extends StatelessWidget {
         width: double.infinity,
         height: 200,
         margin: EdgeInsets.only(
-          top: 30,
+          top: 20,
           right: 30,
           left: 30,
         ),
@@ -228,7 +235,7 @@ class HomeScreen extends StatelessWidget {
     Widget jenisSampah() {
       return Container(
         margin: EdgeInsets.only(
-          top: 30,
+          top: 20,
           left: 30,
           right: 30,
         ),
@@ -409,7 +416,7 @@ class HomeScreen extends StatelessWidget {
     Widget slider() {
       return Container(
         margin: EdgeInsets.only(
-          top: 30,
+          top: 20,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,26 +431,50 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              height: 15,
-            ),
             Container(
-              child: CarouselSlider(
+              margin: EdgeInsets.all(15),
+              child: CarouselSlider.builder(
+                itemCount: bannerList!.length,
                 options: CarouselOptions(
-                  // height: 145,
                   aspectRatio: 2.5,
                   enlargeCenterPage: true,
                   autoPlay: true,
                 ),
-                items: bannerList
-                    .map(
-                      (item) => Container(
-                        child: Center(
-                          child: Image.asset(item, fit: BoxFit.cover),
+                itemBuilder: (context, i, id) {
+                  //for onTap to redirect to another screen
+                  return GestureDetector(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: Colors.white,
+                          )),
+                      //ClipRRect for image border radius
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.network(
+                          bannerList![i].image.toString(),
+                          height: 150,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    )
-                    .toList(),
+                    ),
+                    onTap: () {
+                      var url = bannerList![i].url;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WebViewScreen(
+                            title: 'Event E-Waste',
+                            url: url.toString(),
+                          ),
+                        ),
+                      );
+
+                      print(url.toString());
+                    },
+                  );
+                },
               ),
             ),
           ],
@@ -471,13 +502,12 @@ class HomeScreen extends StatelessWidget {
               height: 15,
             ),
             Column(
-              children: [
-                ArticleItem(img: articleList[0]),
-                ArticleItem(img: articleList[1]),
-                ArticleItem(img: articleList[2]),
-                ArticleItem(img: articleList[3]),
-              ],
-            )
+              children: articleProvider.articles
+                  .map(
+                    (article) => ArticleItem(article: article),
+                  )
+                  .toList(),
+            ),
           ],
         ),
       );

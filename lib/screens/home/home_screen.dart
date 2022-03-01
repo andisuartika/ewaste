@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ewaste/faker/slider_faker.dart';
 import 'package:ewaste/models/slider_model.dart';
@@ -11,6 +14,7 @@ import 'package:ewaste/widgets/article_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -21,14 +25,25 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<SliderModel>? bannerList;
+  bool isLoading = true;
+
   @override
   void initState() {
     // TODO: implement initState
-    setState(() {
-      bannerList = slidersFaker;
-    });
-
     super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      loadData();
+    });
+  }
+
+  Future loadData() async {
+    Timer(Duration(seconds: 1), () {
+      setState(() {
+        bannerList = slidersFaker;
+        isLoading = false;
+      });
+    });
   }
 
   Widget build(BuildContext context) {
@@ -56,15 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 54,
-              height: 54,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(user.profilePhotoUrl.toString()),
-                ),
+            ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: user.profilePhotoUrl.toString(),
+                width: 55,
+                height: 55,
+                fit: BoxFit.cover,
               ),
             ),
             SizedBox(
@@ -434,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               margin: EdgeInsets.all(15),
               child: CarouselSlider.builder(
-                itemCount: bannerList!.length,
+                itemCount: isLoading ? 3 : bannerList!.length,
                 options: CarouselOptions(
                   aspectRatio: 2.5,
                   enlargeCenterPage: true,
@@ -451,28 +463,52 @@ class _HomeScreenState extends State<HomeScreen> {
                           )),
                       //ClipRRect for image border radius
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.network(
-                          bannerList![i].image.toString(),
-                          height: 150,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      var url = bannerList![i].url;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WebViewScreen(
-                            title: 'Event E-Waste',
-                            url: url.toString(),
+                          borderRadius: BorderRadius.circular(15),
+                          child: isLoading
+                              ? Shimmer.fromColors(
+                                  child: Container(
+                                    height: 150,
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  baseColor: Colors.grey.shade300,
+                                  highlightColor: Colors.grey.shade100,
+                                )
+                              : CachedNetworkImage(
+                                  imageUrl: bannerList![i].image.toString(),
+                                  height: 150,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      Shimmer.fromColors(
+                                    child: Container(
+                                      height: 150,
+                                    ),
+                                    baseColor: Colors.grey.shade700,
+                                    highlightColor: Colors.grey.shade300,
+                                  ),
+                                )
+                          // Image.network(
+                          //   bannerList![i].image.toString(),
+                          //   height: 150,
+                          //   fit: BoxFit.cover,
+                          // ),
                           ),
-                        ),
-                      );
+                    ),
+                    onTap: isLoading
+                        ? () {}
+                        : () {
+                            var url = bannerList![i].url;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WebViewScreen(
+                                  title: 'Event E-Waste',
+                                  url: url.toString(),
+                                ),
+                              ),
+                            );
 
-                      print(url.toString());
-                    },
+                            print(url.toString());
+                          },
                   );
                 },
               ),

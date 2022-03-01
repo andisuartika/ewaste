@@ -10,7 +10,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class MainScrenn extends StatefulWidget {
-  const MainScrenn({Key? key}) : super(key: key);
+  final int pageIndex;
+  const MainScrenn({Key? key, this.pageIndex = 0}) : super(key: key);
 
   @override
   _MainScrennState createState() => _MainScrennState();
@@ -23,6 +24,10 @@ class _MainScrennState extends State<MainScrenn> {
   Widget build(BuildContext context) {
     // PAGE PROVIDER
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+
+    setState(() {
+      currentIndex = widget.pageIndex;
+    });
 
     // SHOW BOTTOM SHEET
     void showBottomSheet() => showModalBottomSheet(

@@ -13,11 +13,11 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // GET USER
   Future<void> getUser(_token) async {
     try {
       UserModel user = await AuthService().getUser(token: _token);
       _user = user;
-      print(user.name);
     } catch (e) {
       print(e);
     }
@@ -59,6 +59,32 @@ class AuthProvider with ChangeNotifier {
       _user = user;
 
       UserPreferences().saveUser(_user);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // EDIT PROFILE
+  Future<bool> editProfile({
+    required String name,
+    required String email,
+    required String alamat,
+    required String noHp,
+    required String token,
+  }) async {
+    try {
+      UserModel user = await AuthService().editProfile(
+        name: name,
+        email: email,
+        alamat: alamat,
+        noHp: noHp,
+        token: token,
+      );
+
+      _user = user;
+
       return true;
     } catch (e) {
       print(e);

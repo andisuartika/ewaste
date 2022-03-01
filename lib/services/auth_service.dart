@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 class AuthService {
   String baseUrl = 'https://wastebali.com/api';
 
+  // REGISTER
   Future<UserModel> register({
     required String name,
     required String email,
@@ -39,6 +40,7 @@ class AuthService {
     }
   }
 
+  // LOGIN
   Future<UserModel> login({
     required String email,
     required String password,
@@ -69,6 +71,45 @@ class AuthService {
     }
   }
 
+  // EDIT PROFILE
+  Future<UserModel> editProfile({
+    required String email,
+    required String name,
+    required String noHp,
+    required String alamat,
+    required String token,
+  }) async {
+    var url = '$baseUrl/user';
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
+    var body = jsonEncode({
+      'email': email,
+      'name': name,
+      'noHp': noHp,
+      'alamat': alamat,
+    });
+
+    var response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'];
+      UserModel user = UserModel.fromJson(data);
+      user.token = token;
+      return user;
+    } else {
+      throw Exception('Gagal Update Profile');
+    }
+  }
+
+  // GET USER
   Future<UserModel> getUser({
     required String token,
   }) async {
@@ -87,7 +128,7 @@ class AuthService {
       var data = jsonDecode(response.body)['data'];
       UserModel user = UserModel.fromJson(data);
       user.token = token;
-      print(data);
+
       return user;
     } else {
       throw Exception('Error Get User');

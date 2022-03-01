@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../theme.dart';
 
@@ -24,11 +26,28 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
         children: [
           Stack(
             children: [
-              Image.network(
-                'https://images.unsplash.com/photo-1536703219213-0223580c76b2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80',
-                height: height * 0.4,
-                fit: BoxFit.cover,
+              Container(
+                child: CachedNetworkImage(
+                  imageUrl:
+                      "https://images.unsplash.com/photo-1536703219213-0223580c76b2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80",
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    child: Container(
+                      height: height * 0.36,
+                      width: double.infinity,
+                    ),
+                    baseColor: Colors.grey.shade700,
+                    highlightColor: Colors.grey.shade300,
+                  ),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  fit: BoxFit.cover,
+                  height: height * 0.4,
+                ),
               ),
+              // Image.network(
+              //   'https://images.unsplash.com/photo-1536703219213-0223580c76b2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80',
+              //   height: height * 0.4,
+              //   fit: BoxFit.cover,
+              // ),
               Positioned(
                 top: height * 0.36,
                 child: Container(

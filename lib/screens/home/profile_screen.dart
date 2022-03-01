@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/loading_button.dart';
 import 'package:ewaste/widgets/profile_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../theme.dart';
@@ -42,6 +44,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         );
       }
+    }
+
+    // DIALOG
+    Future<void> showLogoutDialog() async {
+      return showDialog(
+        context: context,
+        builder: (BuildContext context) => Container(
+          width: MediaQuery.of(context).size.width - (2 * defaultMargin),
+          child: AlertDialog(
+            backgroundColor: whiteColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                  ),
+                  SvgPicture.asset(
+                    'assets/icon_alert.svg',
+                    color: redTextColor,
+                    width: 80,
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    'Keluar?',
+                    style: primaryTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: semiBold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    'apa kamu yakin untuk keluar?',
+                    style: secondaryTextStyle.copyWith(fontSize: 12),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 44,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Tidak',
+                            style: whiteTextStyle.copyWith(
+                              fontSize: 16,
+                              fontWeight: medium,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 100,
+                        height: 44,
+                        child: TextButton(
+                          onPressed: handleLogout,
+                          style: TextButton.styleFrom(
+                            backgroundColor: redTextColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Yakin',
+                            style: whiteTextStyle.copyWith(
+                              fontSize: 16,
+                              fontWeight: medium,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
     }
 
     // HEADER
@@ -87,11 +195,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: 75,
               height: 75,
               margin: EdgeInsets.only(top: 20),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: user.profilePhotoUrl.toString(),
+                  width: 75,
+                  height: 75,
                   fit: BoxFit.cover,
-                  image: NetworkImage(user.profilePhotoUrl.toString()),
                 ),
               ),
             ),
@@ -246,7 +355,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: CustomButton(
           text: 'Keluar',
           color: primaryColor,
-          press: handleLogout,
+          press: showLogoutDialog,
         ),
       );
     }

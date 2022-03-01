@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/screens/home/main_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/custom_button.dart';
+import 'package:ewaste/widgets/loading_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,6 +26,8 @@ class UbahProfileScreen extends StatefulWidget {
 }
 
 class _UbahProfileScreenState extends State<UbahProfileScreen> {
+  bool isLoading = false;
+
   @override
   // IMAGE PICKER
 
@@ -124,6 +130,121 @@ class _UbahProfileScreenState extends State<UbahProfileScreen> {
     TextEditingController alamatController =
         TextEditingController(text: user.alamat);
 
+    // DIALOG
+    Future<void> showMessDialog(bool success) async {
+      return showDialog(
+        context: context,
+        builder: (BuildContext context) => Container(
+          width: MediaQuery.of(context).size.width - (2 * defaultMargin),
+          child: AlertDialog(
+            backgroundColor: whiteColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                  ),
+                  SvgPicture.asset(
+                    success
+                        ? 'assets/icon_success.svg'
+                        : 'assets/icon_alert.svg',
+                    color: success ? primaryColor : redTextColor,
+                    width: 80,
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    success ? 'Berhasil!' : 'Gagal!',
+                    style: primaryTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: semiBold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    success
+                        ? 'profile berhasil diubah'
+                        : 'profile gagal diubah',
+                    style: secondaryTextStyle.copyWith(fontSize: 12),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    width: 145,
+                    height: 44,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MainScrenn(
+                              pageIndex: 4,
+                            ),
+                          ),
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: success ? primaryColor : redTextColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'Lanjut',
+                        style: whiteTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: medium,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // HANDLE REGISTER
+    handleEditProfile() async {
+      setState(() {
+        isLoading = true;
+      });
+
+      if (await authProvider.editProfile(
+        name: namaController.text,
+        email: emailController.text,
+        alamat: alamatController.text,
+        noHp: noHpController.text,
+        token: user.token.toString(),
+      )) {
+        showMessDialog(true);
+      } else {
+        showMessDialog(false);
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+
     // PHOTO PROFILE
     Widget photoProfile() {
       return Container(
@@ -148,14 +269,13 @@ class _UbahProfileScreenState extends State<UbahProfileScreen> {
                 : Container(
                     width: 100,
                     height: 100,
-                    margin: EdgeInsets.only(
-                      bottom: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: user.profilePhotoUrl.toString(),
+                        width: 100,
+                        height: 100,
                         fit: BoxFit.cover,
-                        image: NetworkImage(user.profilePhotoUrl.toString()),
                       ),
                     ),
                   ),
@@ -222,17 +342,22 @@ class _UbahProfileScreenState extends State<UbahProfileScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        margin: EdgeInsets.symmetric(
-          horizontal: 30,
-          vertical: 30,
-        ),
-        child: CustomButton(
-          text: 'Simpan',
-          color: primaryColor,
-          press: () {},
-        ),
-      ),
+      bottomNavigationBar: isLoading
+          ? Container(
+              margin: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+              child: LoadingButton(),
+            )
+          : Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: 30,
+                vertical: 30,
+              ),
+              child: CustomButton(
+                text: 'Simpan',
+                color: primaryColor,
+                press: handleEditProfile,
+              ),
+            ),
     );
   }
 }

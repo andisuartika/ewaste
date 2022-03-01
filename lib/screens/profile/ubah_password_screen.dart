@@ -25,6 +25,7 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
         width: double.infinity,
         margin: EdgeInsets.symmetric(vertical: 30),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Ganti kata sandi kamu',

@@ -1,3 +1,4 @@
+import 'package:ewaste/screens/home/main_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -34,7 +35,14 @@ class _QrScreenState extends State<QrScreen> {
             left: 30,
             child: GestureDetector(
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MainScrenn(
+                        pageIndex: 0,
+                      ),
+                    ),
+                    (route) => false);
               },
               child: Container(
                 width: 35,

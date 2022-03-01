@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ewaste/models/article_model.dart';
 import 'package:ewaste/screens/webview_screen.dart';
 import 'package:flutter/material.dart';
@@ -41,23 +42,25 @@ class ArticleItem extends StatelessWidget {
                   Text(
                     article.title.toString(),
                     style: primaryTextStyle.copyWith(
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: medium,
-                      height: 1.2,
+                      height: 1,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 5),
                   Expanded(
                     child: Text(
                       article.desc.toString(),
                       style: secondaryTextStyle.copyWith(
-                        fontSize: 10,
+                        fontSize: 12,
                         fontWeight: light,
                         height: 1.2,
                       ),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.justify,
+                      // textAlign: TextAlign.justify,
                     ),
                   ),
                   GestureDetector(
@@ -75,7 +78,7 @@ class ArticleItem extends StatelessWidget {
                     child: Text(
                       'Baca selengkapnya..',
                       style: greenTextStyle.copyWith(
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: light,
                       ),
                     ),
@@ -90,14 +93,14 @@ class ArticleItem extends StatelessWidget {
           Container(
             height: 90,
             width: 100,
-            decoration: BoxDecoration(
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
-                image: NetworkImage(article.image.toString()),
+              child: CachedNetworkImage(
+                imageUrl: article.image.toString(),
                 fit: BoxFit.cover,
               ),
             ),
-          )
+          ),
         ],
       ),
     );

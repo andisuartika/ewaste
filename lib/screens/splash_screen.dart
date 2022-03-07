@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/providers/sampah_provider.dart';
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,6 +22,8 @@ class _SplashScreenState extends State<SplashScreen> {
     cekLogin();
     super.initState();
     Provider.of<ArticleProvider>(context, listen: false).getArticles();
+
+    Provider.of<SampahProvider>(context, listen: false).getSampah();
   }
 
   cekLogin() async {

@@ -1,6 +1,7 @@
 import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/page_provider.dart';
+import 'package:ewaste/providers/sampah_provider.dart';
 import 'package:ewaste/providers/slider_provider.dart';
 import 'package:ewaste/screens/cari_nasabah_screen.dart';
 import 'package:ewaste/screens/home/input_sampah_screen.dart';
@@ -45,6 +46,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => SliderProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SampahProvider(),
         ),
       ],
       child: MaterialApp(

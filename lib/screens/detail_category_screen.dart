@@ -1,14 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ewaste/models/sampah_model.dart';
+import 'package:ewaste/providers/sampah_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../theme.dart';
 
 class DetailCategoryScreen extends StatefulWidget {
-  const DetailCategoryScreen({Key? key}) : super(key: key);
+  final int id;
+  const DetailCategoryScreen({Key? key, required this.id}) : super(key: key);
 
   @override
   State<DetailCategoryScreen> createState() => _DetailCategoryScreenState();
@@ -16,9 +17,24 @@ class DetailCategoryScreen extends StatefulWidget {
 
 class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
   @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   getSampah();
+  // }
+
+  // getSampah() async {
+  //   await Provider.of<SampahProvider>(context, listen: false)
+  //       .getSampah(widget.id);
+  // }
+
+  @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+
+    SampahProvider sampahProvider = Provider.of<SampahProvider>(context);
+    SampahModel sampah = sampahProvider.sampah;
 
     // HEADER
     Widget header() {
@@ -105,7 +121,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
           children: [
             // TITLE SAMPAH
             Text(
-              'Sampah Organik',
+              sampah.nama.toString(),
               style: primaryTextStyle.copyWith(
                 fontSize: 18,
                 fontWeight: semiBold,

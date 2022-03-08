@@ -7,6 +7,8 @@ class CustomTextFormField extends StatelessWidget {
   final String title;
   final String hint;
   final String icon;
+  final validator;
+  final keyboardType;
   final TextEditingController controller;
 
   const CustomTextFormField({
@@ -15,6 +17,8 @@ class CustomTextFormField extends StatelessWidget {
     required this.hint,
     required this.icon,
     required this.controller,
+    required this.validator,
+    this.keyboardType,
   }) : super(key: key);
 
   @override
@@ -33,38 +37,34 @@ class CustomTextFormField extends StatelessWidget {
           height: 3,
         ),
         Container(
-          height: 50,
-          padding: EdgeInsets.symmetric(
-            horizontal: 16,
-          ),
-          decoration: BoxDecoration(
-            color: backgorundFieldColor,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Center(
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  icon,
-                  width: 20,
+          width: double.infinity,
+          child: TextFormField(
+            cursorColor: primaryTextColor,
+            keyboardType: keyboardType,
+            controller: controller,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: validator,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
+              hintText: hint,
+              hintStyle: hintTextStyle.copyWith(
+                fontSize: 12,
+                fontWeight: regular,
+              ),
+              fillColor: backgorundFieldColor,
+              filled: true,
+              border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(
+                  12,
                 ),
-                SizedBox(
-                  width: 16,
-                ),
-                Expanded(
-                  child: TextFormField(
-                    style: primaryTextStyle,
-                    controller: controller,
-                    decoration: InputDecoration.collapsed(
-                      hintText: hint,
-                      hintStyle: hintTextStyle.copyWith(
-                        fontSize: 12,
-                        fontWeight: regular,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
+              prefixIcon: SvgPicture.asset(
+                icon,
+                width: 10,
+                height: 10,
+                fit: BoxFit.scaleDown,
+              ),
             ),
           ),
         ),

@@ -3,11 +3,11 @@ import 'package:ewaste/services/sampah_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class SampahProvider with ChangeNotifier {
-  late SampahModel _sampah;
+  List<SampahModel> _sampah = [];
 
-  SampahModel get sampah => _sampah;
+  List<SampahModel> get sampah => _sampah;
 
-  set user(SampahModel sampah) {
+  set sampah(List<SampahModel> sampah) {
     _sampah = sampah;
     notifyListeners();
   }
@@ -15,7 +15,7 @@ class SampahProvider with ChangeNotifier {
   // GET SAMPAH
   Future<void> getSampah() async {
     try {
-      SampahModel sampah = await SampahService().getSampah();
+      List<SampahModel> sampah = await SampahService().getSampah();
       _sampah = sampah;
       print('Provider: $_sampah');
     } catch (e) {

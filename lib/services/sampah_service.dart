@@ -8,7 +8,7 @@ class SampahService {
   String baseUrl = 'https://wastebali.com/api';
 
   // GET USER
-  Future<SampahModel> getSampah() async {
+  Future<List<SampahModel>> getSampah() async {
     var url = '$baseUrl/sampah';
     var headers = {
       'Content-Type': 'application/json',
@@ -21,10 +21,14 @@ class SampahService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      print(data);
-      SampahModel user = SampahModel.fromJson(data);
+      // print(data);
 
-      return user;
+      List<SampahModel> sampah = [];
+      for (var item in data) {
+        sampah.add(SampahModel.fromJson(item));
+      }
+
+      return sampah;
     } else {
       throw Exception('Error Get Sampah');
     }

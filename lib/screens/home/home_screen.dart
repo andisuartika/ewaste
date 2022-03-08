@@ -7,10 +7,12 @@ import 'package:ewaste/models/slider_model.dart';
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/providers/sampah_provider.dart';
 import 'package:ewaste/screens/detail_category_screen.dart';
 import 'package:ewaste/screens/webview_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/article_item.dart';
+import 'package:ewaste/widgets/category_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel user = authProvider.user;
     ArticleProvider articleProvider = Provider.of<ArticleProvider>(context);
+    SampahProvider sampahProvider = Provider.of<SampahProvider>(context);
 
     // HEADER
     Widget header() {
@@ -73,7 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ClipOval(
               child: CachedNetworkImage(
-                imageUrl: user.profilePhotoUrl.toString(),
+                imageUrl: user.profilePhotoPath == null
+                    ? 'http://wastebali.com/storage/usersProfile/user.png'
+                    : user.profilePhotoUrl.toString(),
                 width: 55,
                 height: 55,
                 fit: BoxFit.cover,
@@ -249,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
         margin: EdgeInsets.only(
           top: 20,
           left: 30,
-          right: 30,
+          right: 10,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,160 +271,131 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // ORGANIK
-                GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DetailCategoryScreen(
-                        id: 1,
-                      ),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            image: AssetImage('assets/icon_js_organik.png'),
-                          ),
+              children:
+                  // ORGANIK
+                  sampahProvider.sampah
+                      .map(
+                        (sampah) => CategoryItem(
+                          sampah: sampah,
                         ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Oragnik',
-                        style: secondaryTextStyle.copyWith(
-                          fontSize: 10,
-                          fontWeight: light,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // PLASTIK
-                GestureDetector(
-                  onTap: () {},
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            image: AssetImage('assets/icon_js_plastik.png'),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Plastik',
-                        style: secondaryTextStyle.copyWith(
-                          fontSize: 10,
-                          fontWeight: light,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // KERTAS
-                GestureDetector(
-                  onTap: () {},
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            image: AssetImage('assets/icon_js_kertas.png'),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Kertas',
-                        style: secondaryTextStyle.copyWith(
-                          fontSize: 10,
-                          fontWeight: light,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // BESI
-                GestureDetector(
-                  onTap: () {},
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            image: AssetImage('assets/icon_js_besi.png'),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Besi',
-                        style: secondaryTextStyle.copyWith(
-                          fontSize: 10,
-                          fontWeight: light,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // KACA
-                GestureDetector(
-                  onTap: () {},
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            image: AssetImage('assets/icon_js_kaca.png'),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Kaca',
-                        style: secondaryTextStyle.copyWith(
-                          fontSize: 10,
-                          fontWeight: light,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                      )
+                      .toList(),
+              // PLASTIK
+              // GestureDetector(
+              //   onTap: () {},
+              //   child: Column(
+              //     children: [
+              //       Container(
+              //         width: 50,
+              //         height: 50,
+              //         decoration: BoxDecoration(
+              //           color: primaryColor,
+              //           borderRadius: BorderRadius.circular(10),
+              //           image: DecorationImage(
+              //             image: AssetImage('assets/icon_js_plastik.png'),
+              //           ),
+              //         ),
+              //       ),
+              //       SizedBox(
+              //         height: 5,
+              //       ),
+              //       Text(
+              //         'Plastik',
+              //         style: secondaryTextStyle.copyWith(
+              //           fontSize: 10,
+              //           fontWeight: light,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // // KERTAS
+              // GestureDetector(
+              //   onTap: () {},
+              //   child: Column(
+              //     children: [
+              //       Container(
+              //         width: 50,
+              //         height: 50,
+              //         decoration: BoxDecoration(
+              //           color: primaryColor,
+              //           borderRadius: BorderRadius.circular(10),
+              //           image: DecorationImage(
+              //             image: AssetImage('assets/icon_js_kertas.png'),
+              //           ),
+              //         ),
+              //       ),
+              //       SizedBox(
+              //         height: 5,
+              //       ),
+              //       Text(
+              //         'Kertas',
+              //         style: secondaryTextStyle.copyWith(
+              //           fontSize: 10,
+              //           fontWeight: light,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // // BESI
+              // GestureDetector(
+              //   onTap: () {},
+              //   child: Column(
+              //     children: [
+              //       Container(
+              //         width: 50,
+              //         height: 50,
+              //         decoration: BoxDecoration(
+              //           color: primaryColor,
+              //           borderRadius: BorderRadius.circular(10),
+              //           image: DecorationImage(
+              //             image: AssetImage('assets/icon_js_besi.png'),
+              //           ),
+              //         ),
+              //       ),
+              //       SizedBox(
+              //         height: 5,
+              //       ),
+              //       Text(
+              //         'Besi',
+              //         style: secondaryTextStyle.copyWith(
+              //           fontSize: 10,
+              //           fontWeight: light,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // // KACA
+              // GestureDetector(
+              //   onTap: () {},
+              //   child: Column(
+              //     children: [
+              //       Container(
+              //         width: 50,
+              //         height: 50,
+              //         decoration: BoxDecoration(
+              //           color: primaryColor,
+              //           borderRadius: BorderRadius.circular(10),
+              //           image: DecorationImage(
+              //             image: AssetImage('assets/icon_js_kaca.png'),
+              //           ),
+              //         ),
+              //       ),
+              //       SizedBox(
+              //         height: 5,
+              //       ),
+              //       Text(
+              //         'Kaca',
+              //         style: secondaryTextStyle.copyWith(
+              //           fontSize: 10,
+              //           fontWeight: light,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ),
           ],
         ),

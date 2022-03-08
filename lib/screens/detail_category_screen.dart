@@ -8,8 +8,11 @@ import 'package:shimmer/shimmer.dart';
 import '../theme.dart';
 
 class DetailCategoryScreen extends StatefulWidget {
-  final int id;
-  const DetailCategoryScreen({Key? key, required this.id}) : super(key: key);
+  final SampahModel sampah;
+  const DetailCategoryScreen({
+    Key? key,
+    required this.sampah,
+  }) : super(key: key);
 
   @override
   State<DetailCategoryScreen> createState() => _DetailCategoryScreenState();
@@ -17,24 +20,10 @@ class DetailCategoryScreen extends StatefulWidget {
 
 class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
   @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   getSampah();
-  // }
-
-  // getSampah() async {
-  //   await Provider.of<SampahProvider>(context, listen: false)
-  //       .getSampah(widget.id);
-  // }
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
-    SampahProvider sampahProvider = Provider.of<SampahProvider>(context);
-    SampahModel sampah = sampahProvider.sampah;
 
     // HEADER
     Widget header() {
@@ -44,8 +33,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
             children: [
               Container(
                 child: CachedNetworkImage(
-                  imageUrl:
-                      "https://images.unsplash.com/photo-1536703219213-0223580c76b2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80",
+                  imageUrl: widget.sampah.image.toString(),
                   placeholder: (context, url) => Shimmer.fromColors(
                     child: Container(
                       height: height * 0.36,
@@ -59,11 +47,6 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                   height: height * 0.4,
                 ),
               ),
-              // Image.network(
-              //   'https://images.unsplash.com/photo-1536703219213-0223580c76b2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80',
-              //   height: height * 0.4,
-              //   fit: BoxFit.cover,
-              // ),
               Positioned(
                 top: height * 0.36,
                 child: Container(
@@ -121,7 +104,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
           children: [
             // TITLE SAMPAH
             Text(
-              sampah.nama.toString(),
+              widget.sampah.nama.toString(),
               style: primaryTextStyle.copyWith(
                 fontSize: 18,
                 fontWeight: semiBold,
@@ -146,7 +129,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                     style: whiteTextStyle,
                   ),
                   Text(
-                    'Rp. 500,00',
+                    'Rp. ${widget.sampah.harga}',
                     style: whiteTextStyle.copyWith(
                       fontSize: 16,
                       fontWeight: semiBold,
@@ -184,7 +167,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    'Sampah organik merupakan sampah ramah lingkungan dan dapat diolah kembali menjadi sesuatu yang bermanfaat bila dikelola dengan benar. tetapi jika tidak dikelola dengan baik dan benar maka akan menimbulkan bau yang kurang sedang dan dapat menimbulkan penyakit dari hasil pembusukan sampah organik yang cepat.',
+                    widget.sampah.tentang.toString(),
                     style: secondaryTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: light,
@@ -214,7 +197,7 @@ class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    'Sampah organik merupakan bisa dimanfaatkan kembali menjadi pupuk kompos yang dilakukan secara alami. Pembuatan pupuk kompos mudah dan dapat berguna untuk budidaya tanaman.',
+                    widget.sampah.pengelolaan.toString(),
                     style: secondaryTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: light,

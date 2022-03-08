@@ -1,9 +1,10 @@
 class SampahModel {
   int? id;
   String? nama;
-  int? harga;
+  String? harga;
   String? tentang;
   String? pengelolaan;
+  String? image;
 
   SampahModel({
     required this.id,
@@ -11,6 +12,7 @@ class SampahModel {
     required this.harga,
     required this.tentang,
     required this.pengelolaan,
+    required this.image,
   });
 
   SampahModel.fromJson(Map<String, dynamic> json) {
@@ -19,6 +21,7 @@ class SampahModel {
     harga = json['harga'];
     tentang = json['tentang'];
     pengelolaan = json['pengelolaan'];
+    image = json['image'];
   }
 
   Map<String, dynamic> toJson() {
@@ -28,6 +31,7 @@ class SampahModel {
       'harga': harga,
       'tentang': tentang,
       'pengelolaan': pengelolaan,
+      'image': image,
     };
   }
 }

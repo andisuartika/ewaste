@@ -196,12 +196,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 75,
               margin: EdgeInsets.only(top: 20),
               child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: user.profilePhotoUrl.toString(),
-                  width: 75,
-                  height: 75,
-                  fit: BoxFit.cover,
-                ),
+                child: user.profilePhotoPath == null
+                    ? Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: whiteColor,
+                            width: 2,
+                          ),
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl:
+                              'http://wastebali.com/storage/usersProfile/user.png',
+                          width: 75,
+                          height: 75,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: user.profilePhotoUrl.toString(),
+                        width: 75,
+                        height: 75,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             SizedBox(

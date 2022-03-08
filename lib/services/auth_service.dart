@@ -109,6 +109,40 @@ class AuthService {
     }
   }
 
+  // CHANGE PASSWORD
+  Future<bool> changePassword({
+    required String email,
+    required String password,
+    required String newPassword,
+    required String token,
+  }) async {
+    var url = '$baseUrl/changePassword';
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
+    var body = jsonEncode({
+      'email': email,
+      'password': password,
+      'new_password': newPassword,
+    });
+
+    var response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    print(password);
+
+    print(response.body);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Gagal Ubah Kata sandi Profile');
+    }
+  }
+
   // GET USER
   Future<UserModel> getUser({
     required String token,

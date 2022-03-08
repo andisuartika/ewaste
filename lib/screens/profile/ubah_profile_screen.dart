@@ -272,9 +272,11 @@ class _UbahProfileScreenState extends State<UbahProfileScreen> {
                     margin: EdgeInsets.only(bottom: 10),
                     child: ClipOval(
                       child: CachedNetworkImage(
-                        imageUrl: user.profilePhotoUrl.toString(),
-                        width: 100,
-                        height: 100,
+                        imageUrl: user.profilePhotoPath == null
+                            ? 'http://wastebali.com/storage/usersProfile/user.png'
+                            : user.profilePhotoUrl.toString(),
+                        width: 55,
+                        height: 55,
                         fit: BoxFit.cover,
                       ),
                     ),

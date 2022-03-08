@@ -92,6 +92,28 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // CHANGE PASSWORD
+  Future<bool> changePassword({
+    required String email,
+    required String password,
+    required String newPassword,
+    required String token,
+  }) async {
+    try {
+      bool mess = await AuthService().changePassword(
+        email: email,
+        password: password,
+        newPassword: newPassword,
+        token: token,
+      );
+      print(mess);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   // LOGOUT
   Future<bool> logout(_token) async {
     try {

@@ -15,6 +15,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final formkey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController(text: '');
 
   TextEditingController emailController = TextEditingController(text: '');
@@ -83,7 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             SizedBox(
-              height: 30,
+              height: 10,
             ),
             Text(
               'Registrasi',
@@ -117,6 +118,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           hint: 'Masukkan Nama',
           icon: 'assets/icon_nama.svg',
           controller: nameController,
+          validator: (value) {
+            // NULL
+            if (value!.isEmpty) {
+              return "Masukkan nama";
+            }
+
+            return null;
+          },
         ),
       );
     }
@@ -130,6 +139,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
           hint: 'Masukkan Email',
           icon: 'assets/icon_email.svg',
           controller: emailController,
+          validator: (value) {
+            // NULL
+            if (value!.isEmpty) {
+              return "Masukkan email";
+            }
+            // VALID EMAIL
+            final pattern =
+                r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)';
+            final regExp = RegExp(pattern);
+
+            if (!regExp.hasMatch(value)) {
+              return "Masukkan email yang valid";
+            }
+            return null;
+          },
         ),
       );
     }
@@ -152,48 +176,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
               height: 3,
             ),
             Container(
-              height: 50,
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
-              decoration: BoxDecoration(
-                color: backgorundFieldColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icon_password.svg',
-                      width: 20,
+              width: double.infinity,
+              child: TextFormField(
+                cursorColor: primaryTextColor,
+                controller: passwordController,
+                obscureText: hidden,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Masukkan kata sandi";
+                  }
+
+                  // at least 7 char
+                  if (value.length < 8) {
+                    return 'Kata sandi harus lebih dari 7 karakter';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
+                  hintText: 'Masukkan Kata sandi',
+                  hintStyle: hintTextStyle.copyWith(
+                    fontSize: 12,
+                    fontWeight: regular,
+                  ),
+                  fillColor: backgorundFieldColor,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(
+                      12,
                     ),
-                    SizedBox(
-                      width: 16,
+                  ),
+                  prefixIcon: SvgPicture.asset(
+                    'assets/icon_password.svg',
+                    width: 10,
+                    height: 10,
+                    fit: BoxFit.scaleDown,
+                  ),
+                  suffixIcon: GestureDetector(
+                    onTap: passwordHidden,
+                    child: SvgPicture.asset(
+                      hidden
+                          ? 'assets/icon_password_eye_hidden.svg'
+                          : 'assets/icon_password_eye.svg',
+                      width: 18,
+                      height: 18,
+                      fit: BoxFit.scaleDown,
                     ),
-                    Expanded(
-                      child: TextFormField(
-                        obscureText: hidden,
-                        style: primaryTextStyle,
-                        controller: passwordController,
-                        decoration: InputDecoration.collapsed(
-                          hintText: 'Masukkan Kata sandi',
-                          hintStyle: hintTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: regular,
-                          ),
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: passwordHidden,
-                      child: SvgPicture.asset(
-                        hidden
-                            ? 'assets/icon_password_eye_hidden.svg'
-                            : 'assets/icon_password_eye.svg',
-                        width: 18,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -220,48 +251,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
               height: 3,
             ),
             Container(
-              height: 50,
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
-              decoration: BoxDecoration(
-                color: backgorundFieldColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Row(
-                  children: [
-                    Image.asset(
-                      'assets/icon_password.png',
-                      width: 20,
+              width: double.infinity,
+              child: TextFormField(
+                cursorColor: primaryTextColor,
+                controller: confirmPasswordController,
+                obscureText: hidden,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Masukkan kata sandi";
+                  }
+                  // at least 7 char
+                  if (value != passwordController.text) {
+                    return 'Kata sandi tidak sama';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
+                  hintText: 'Masukkan Kata sandi',
+                  hintStyle: hintTextStyle.copyWith(
+                    fontSize: 12,
+                    fontWeight: regular,
+                  ),
+                  fillColor: backgorundFieldColor,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(
+                      12,
                     ),
-                    SizedBox(
-                      width: 16,
+                  ),
+                  prefixIcon: SvgPicture.asset(
+                    'assets/icon_password.svg',
+                    width: 10,
+                    height: 10,
+                    fit: BoxFit.scaleDown,
+                  ),
+                  suffixIcon: GestureDetector(
+                    onTap: passwordHidden,
+                    child: SvgPicture.asset(
+                      hidden
+                          ? 'assets/icon_password_eye_hidden.svg'
+                          : 'assets/icon_password_eye.svg',
+                      width: 18,
+                      height: 18,
+                      fit: BoxFit.scaleDown,
                     ),
-                    Expanded(
-                      child: TextFormField(
-                        obscureText: hidden,
-                        style: primaryTextStyle,
-                        controller: confirmPasswordController,
-                        decoration: InputDecoration.collapsed(
-                          hintText: 'Masukkan Ulang Kata sandi',
-                          hintStyle: hintTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: regular,
-                          ),
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: passwordHidden,
-                      child: Image.asset(
-                        hidden
-                            ? 'assets/icon_password_eye_hidden.png'
-                            : 'assets/icon_password_eye.png',
-                        width: 18,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -277,7 +314,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: CustomButton(
           text: 'Registrasi',
           color: primaryColor,
-          press: handleRegister,
+          press: () {
+            if (formkey.currentState!.validate()) {
+              handleRegister();
+            }
+          },
         ),
       );
     }
@@ -293,7 +334,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // FOOTER
     Widget footer() {
       return Container(
-        margin: EdgeInsets.only(top: 35),
+        margin: EdgeInsets.symmetric(vertical: defaultMargin),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -321,21 +362,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: backgorundColor,
       body: SingleChildScrollView(
         child: SafeArea(
-          child: Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: defaultMargin,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                header(),
-                nameInput(),
-                emailInput(),
-                passwordInput(),
-                confirmPassword(),
-                isLoading ? buttonLoading() : buttonRegister(),
-                footer(),
-              ],
+          child: Form(
+            key: formkey,
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: defaultMargin,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  header(),
+                  nameInput(),
+                  emailInput(),
+                  passwordInput(),
+                  confirmPassword(),
+                  isLoading ? buttonLoading() : buttonRegister(),
+                  footer(),
+                ],
+              ),
             ),
           ),
         ),

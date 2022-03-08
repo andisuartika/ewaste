@@ -17,6 +17,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final formkey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController(text: '');
   TextEditingController passwordController = TextEditingController(text: '');
 
@@ -70,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // HEADER
     Widget header() {
       return Container(
-        margin: EdgeInsets.only(top: 70),
+        margin: EdgeInsets.only(top: 30),
         width: double.infinity,
         child: Column(
           children: [
@@ -101,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // LOGIN TEXT
     Widget textLogin() {
       return Container(
-        margin: EdgeInsets.only(top: 70),
+        margin: EdgeInsets.only(top: 30),
         child: Column(
           children: [
             Text(
@@ -137,6 +138,22 @@ class _LoginScreenState extends State<LoginScreen> {
           hint: 'Masukkan Email',
           icon: 'assets/icon_email.svg',
           controller: emailController,
+          keyboardType: TextInputType.emailAddress,
+          validator: (value) {
+            // NULL
+            if (value!.isEmpty) {
+              return "Masukkan email";
+            }
+            // VALID EMAIL
+            final pattern =
+                r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)';
+            final regExp = RegExp(pattern);
+
+            if (!regExp.hasMatch(value)) {
+              return "Masukkan email yang valid";
+            }
+            return null;
+          },
         ),
       );
     }
@@ -159,48 +176,50 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 3,
             ),
             Container(
-              height: 50,
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
-              decoration: BoxDecoration(
-                color: backgorundFieldColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icon_password.svg',
-                      width: 20,
+              width: double.infinity,
+              child: TextFormField(
+                cursorColor: primaryTextColor,
+                controller: passwordController,
+                obscureText: hidden,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Masukkan kata sandi";
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
+                  hintText: 'Masukkan Kata sandi',
+                  hintStyle: hintTextStyle.copyWith(
+                    fontSize: 12,
+                    fontWeight: regular,
+                  ),
+                  fillColor: backgorundFieldColor,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(
+                      12,
                     ),
-                    SizedBox(
-                      width: 16,
+                  ),
+                  prefixIcon: SvgPicture.asset(
+                    'assets/icon_password.svg',
+                    width: 10,
+                    height: 10,
+                    fit: BoxFit.scaleDown,
+                  ),
+                  suffixIcon: GestureDetector(
+                    onTap: passwordHidden,
+                    child: SvgPicture.asset(
+                      hidden
+                          ? 'assets/icon_password_eye_hidden.svg'
+                          : 'assets/icon_password_eye.svg',
+                      width: 18,
+                      height: 18,
+                      fit: BoxFit.scaleDown,
                     ),
-                    Expanded(
-                      child: TextFormField(
-                        obscureText: hidden,
-                        style: primaryTextStyle,
-                        controller: passwordController,
-                        decoration: InputDecoration.collapsed(
-                          hintText: 'Masukkan Kata sandi',
-                          hintStyle: hintTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: regular,
-                          ),
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: passwordHidden,
-                      child: SvgPicture.asset(
-                        hidden
-                            ? 'assets/icon_password_eye_hidden.svg'
-                            : 'assets/icon_password_eye.svg',
-                        width: 18,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -216,7 +235,11 @@ class _LoginScreenState extends State<LoginScreen> {
         child: CustomButton(
           text: 'Masuk',
           color: primaryColor,
-          press: handleLogin,
+          press: () {
+            if (formkey.currentState!.validate()) {
+              handleLogin();
+            }
+          },
         ),
       );
     }
@@ -232,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // FOOTER
     Widget footer() {
       return Container(
-        margin: EdgeInsets.only(top: 35),
+        margin: EdgeInsets.symmetric(vertical: defaultMargin),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -264,15 +287,18 @@ class _LoginScreenState extends State<LoginScreen> {
             margin: EdgeInsets.symmetric(
               horizontal: defaultMargin,
             ),
-            child: Column(
-              children: [
-                header(),
-                textLogin(),
-                emailInput(),
-                passwordInput(),
-                isLoading ? buttonLoading() : buttonLogin(),
-                footer(),
-              ],
+            child: Form(
+              key: formkey,
+              child: Column(
+                children: [
+                  header(),
+                  textLogin(),
+                  emailInput(),
+                  passwordInput(),
+                  isLoading ? buttonLoading() : buttonLogin(),
+                  footer(),
+                ],
+              ),
             ),
           ),
         ),

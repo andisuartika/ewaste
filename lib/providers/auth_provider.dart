@@ -66,31 +66,33 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // EDIT PROFILE
-  Future<bool> editProfile({
-    required String name,
-    required String email,
-    required String alamat,
-    required String noHp,
-    required String token,
-  }) async {
-    try {
-      UserModel user = await AuthService().editProfile(
-        name: name,
-        email: email,
-        alamat: alamat,
-        noHp: noHp,
-        token: token,
-      );
+  // // EDIT PROFILE
+  // Future<bool> editProfile({
+  //   required String name,
+  //   required String email,
+  //   required String alamat,
+  //   required String noHp,
+  //   required String token,
+  //   filepath,
+  // }) async {
+  //   try {
+  //     UserModel user = await AuthService().editProfile(
+  //       name: name,
+  //       email: email,
+  //       alamat: alamat,
+  //       noHp: noHp,
+  //       token: token,
+  //       filepath: filepath,
+  //     );
 
-      _user = user;
+  //     _user = user;
 
-      return true;
-    } catch (e) {
-      print(e);
-      return false;
-    }
-  }
+  //     return true;
+  //   } catch (e) {
+  //     print(e);
+  //     return false;
+  //   }
+  // }
 
   // CHANGE PASSWORD
   Future<bool> changePassword({

@@ -72,38 +72,33 @@ class AuthService {
   }
 
   // EDIT PROFILE
-  Future<UserModel> editProfile({
-    required String email,
-    required String name,
-    required String noHp,
-    required String alamat,
-    required String token,
+  Future<bool> editProfile({
+    user,
+    filepath,
   }) async {
-    var url = '$baseUrl/user';
-    var headers = {
+    // var stream = http.ByteStream(DelegatingStream.typed(filepath.openRead()));
+    var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/user'));
+    // var multipartFile = http.MultipartFile("image", stream, length, filename: path.basename(filepath.path));
+    request.fields['email'] = user['email'];
+    request.fields['name'] = user['name'];
+    request.fields['noHp'] = user['noHp'];
+    request.fields['alamat'] = user['alamat'];
+    if (filepath != '') {
+      request.files.add(
+          await http.MultipartFile.fromPath('profile_photo_path', filepath));
+    }
+    request.headers.addAll({
+      'Authorization': user['token'],
       'Content-Type': 'application/json',
-      'Authorization': token,
-    };
-    var body = jsonEncode({
-      'email': email,
-      'name': name,
-      'noHp': noHp,
-      'alamat': alamat,
+      'Accept': 'application/json'
     });
-
-    var response = await http.post(
-      Uri.parse(url),
-      headers: headers,
-      body: body,
-    );
-
-    print(response.body);
-
+    var response = await request.send();
+    //final response = await http.post(Uri.parse('$_host/panen'), body:_panen);
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body)['data'];
-      UserModel user = UserModel.fromJson(data);
-      user.token = token;
-      return user;
+      //return ErrorMSG.fromJson(jsonDecode(response.body));
+      final respStr = await response.stream.bytesToString();
+      print(respStr);
+      return true;
     } else {
       throw Exception('Gagal Update Profile');
     }

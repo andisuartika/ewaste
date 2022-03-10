@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/screens/home/main_screen.dart';
+import 'package:ewaste/services/auth_service.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/loading_button.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +32,7 @@ class _UbahProfileScreenState extends State<UbahProfileScreen> {
 
   @override
   // IMAGE PICKER
-
+  late String _imagePath = "";
   File? image;
   Future pickImage(ImageSource source) async {
     try {
@@ -40,10 +42,40 @@ class _UbahProfileScreenState extends State<UbahProfileScreen> {
       // final imageTemporary = File(image.path);
       final imagePermanent = await saveImagePermanently(image.path);
       setState(() => this.image = imagePermanent);
+      cropSquareImage(this.image);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');
     }
   }
+
+  Future<File?> cropSquareImage(File? imageFile) async {
+    File? croppedFile = await ImageCropper().cropImage(
+      sourcePath: imageFile!.path,
+      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+      aspectRatioPresets: [CropAspectRatioPreset.square],
+      compressQuality: 70,
+      compressFormat: ImageCompressFormat.png,
+      androidUiSettings: androidUiSettingsLocked(),
+      iosUiSettings: iosUiSettingsLocked(),
+    );
+    if (croppedFile != null) {
+      setState(() {
+        _imagePath = croppedFile.path;
+      });
+    }
+  }
+
+  IOSUiSettings iosUiSettingsLocked() => IOSUiSettings(
+        rotateClockwiseButtonHidden: false,
+        rotateButtonsHidden: false,
+      );
+
+  AndroidUiSettings androidUiSettingsLocked() => AndroidUiSettings(
+        toolbarTitle: 'Edit Foto',
+        toolbarColor: primaryColor,
+        toolbarWidgetColor: Colors.white,
+        hideBottomControls: true,
+      );
 
   Future<File> saveImagePermanently(String imagePath) async {
     final directory = await getApplicationDocumentsDirectory();
@@ -228,13 +260,17 @@ class _UbahProfileScreenState extends State<UbahProfileScreen> {
         isLoading = true;
       });
 
-      if (await authProvider.editProfile(
-        name: namaController.text,
-        email: emailController.text,
-        alamat: alamatController.text,
-        noHp: noHpController.text,
-        token: user.token.toString(),
-      )) {
+      var users = {
+        'name': namaController.text,
+        'email': emailController.text,
+        'noHp': noHpController.text,
+        'alamat': alamatController.text,
+        'token': user.token.toString(),
+      };
+
+      if (await AuthService().editProfile(user: users, filepath: _imagePath)) {
+        await Provider.of<AuthProvider>(context, listen: false)
+            .getUser(user.token.toString());
         showMessDialog(true);
       } else {
         showMessDialog(false);

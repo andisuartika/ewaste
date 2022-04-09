@@ -225,7 +225,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 40,
                 margin: EdgeInsets.only(top: 20),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/tarik-bank');
+                  },
                   style: TextButton.styleFrom(
                     backgroundColor: greenTextColor,
                     shape: RoundedRectangleBorder(

@@ -20,6 +20,12 @@ class DetailCategoryScreen extends StatefulWidget {
 
 class _DetailCategoryScreenState extends State<DetailCategoryScreen> {
   @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   print('imahges : ${widget.sampah.image.toString()}');
+  //   super.initState();
+  // }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;

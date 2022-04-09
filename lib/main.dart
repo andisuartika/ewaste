@@ -1,5 +1,6 @@
 import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/providers/bank_provider.dart';
 import 'package:ewaste/providers/page_provider.dart';
 import 'package:ewaste/providers/sampah_provider.dart';
 import 'package:ewaste/providers/slider_provider.dart';
@@ -20,6 +21,7 @@ import 'package:ewaste/screens/sampah_terpilah_screen.dart';
 import 'package:ewaste/screens/login_screen.dart';
 import 'package:ewaste/screens/register_screen.dart';
 import 'package:ewaste/screens/splash_screen.dart';
+import 'package:ewaste/screens/tarik/tarik_bank_screen.dart';
 import 'package:ewaste/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +52,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => SampahProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => BankProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -72,6 +77,7 @@ class MyApp extends StatelessWidget {
           '/pusat-bantuan': (context) => PusatBantuanScreen(),
           '/qr-scan': (context) => QrScreen(),
           '/cari-nasabah': (context) => CariNasabahScreen(),
+          '/tarik-bank': (context) => TarikBankScreen(),
         },
       ),
     );

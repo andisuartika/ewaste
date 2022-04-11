@@ -22,6 +22,7 @@ import 'package:ewaste/screens/login_screen.dart';
 import 'package:ewaste/screens/register_screen.dart';
 import 'package:ewaste/screens/splash_screen.dart';
 import 'package:ewaste/screens/tarik/tarik_bank_screen.dart';
+import 'package:ewaste/screens/wallet_screen.dart';
 import 'package:ewaste/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -64,9 +65,8 @@ class MyApp extends StatelessWidget {
           '/register': (context) => RegisterScreen(),
           '/login': (context) => LoginScreen(),
           '/main': (context) => MainScrenn(),
-          '/sampah': (context) => InputSampahScreen(),
-          '/sampah-terpilah': (context) => SampahTerpilahScreen(),
-          '/sampah-campuran': (context) => SampahCampuranScreen(),
+          // '/sampah-terpilah': (context) => SampahTerpilahScreen(),
+          // '/sampah-campuran': (context) => SampahCampuranScreen(),
           '/konfirmasi-tabungan': (context) => KonfirmasiTabunganScreen(),
           '/konfirmasi-sampah': (context) => KonfirmasiIuranSampahScreen(),
           '/ubah-profile': (context) => UbahProfileScreen(),
@@ -78,6 +78,7 @@ class MyApp extends StatelessWidget {
           '/qr-scan': (context) => QrScreen(),
           '/cari-nasabah': (context) => CariNasabahScreen(),
           '/tarik-bank': (context) => TarikBankScreen(),
+          '/tabungan-nasabah': (context) => WalletScreen(),
         },
       ),
     );

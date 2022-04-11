@@ -22,7 +22,7 @@ class CustomTextFormTabungan extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SvgPicture.asset(
+        Image.asset(
           icon,
           width: 24,
         ),

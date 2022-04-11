@@ -1,13 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dotted_line/dotted_line.dart';
+import 'package:ewaste/models/nasabah_model.dart';
+import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/custom_text_form_tabungan.dart';
 import 'package:ewaste/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:provider/provider.dart';
 
 import '../theme.dart';
 
 class SampahTerpilahScreen extends StatefulWidget {
-  const SampahTerpilahScreen({Key? key}) : super(key: key);
+  final NasabahModel nasabah;
+  const SampahTerpilahScreen({Key? key, required this.nasabah})
+      : super(key: key);
 
   @override
   State<SampahTerpilahScreen> createState() => _SampahTerpilahScreenState();
@@ -37,6 +45,9 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserModel user = authProvider.user;
+
     // HANDLE SAVE
     handleSimpan() async {
       setState(() {
@@ -48,6 +59,139 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
       setState(() {
         isLoading = false;
       });
+    }
+
+    // HEADER
+    Widget header() {
+      return Container(
+        margin: EdgeInsets.symmetric(vertical: 30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // PETUGAS
+            Container(
+              child: Row(
+                children: [
+                  // AVATAR IMAGE
+                  ClipOval(
+                    child: user.profilePhotoPath == null
+                        ? Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: secondaryTextColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  'http://wastebali.com/storage/usersProfile/user.png',
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: user.profilePhotoUrl.toString(),
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Petugas',
+                        style: primaryTextStyle.copyWith(
+                          fontSize: 14,
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      Text(
+                        user.name.toString().toUpperCase(),
+                        style: secondaryTextStyle.copyWith(
+                          fontSize: 12,
+                          fontWeight: regular,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 25),
+              child: DottedLine(
+                dashLength: 8,
+                dashGapLength: 5,
+                lineThickness: 2,
+                direction: Axis.vertical,
+                lineLength: 35,
+              ),
+            ),
+            Container(
+              child: Row(
+                children: [
+                  // AVATAR IMAGE
+                  ClipOval(
+                    child: widget.nasabah.profilePhotoPath == null
+                        ? Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: secondaryTextColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  'http://wastebali.com/storage/usersProfile/user.png',
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: widget.nasabah.profilePhotoUrl.toString(),
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Nasabah',
+                        style: primaryTextStyle.copyWith(
+                          fontSize: 14,
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      Text(
+                        widget.nasabah.name.toString().toUpperCase(),
+                        style: secondaryTextStyle.copyWith(
+                          fontSize: 12,
+                          fontWeight: regular,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     // KODE PERJALANAN
@@ -191,7 +335,6 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
     // TABUNGAN TITLE
     Widget tabunganTitle() {
       return Container(
-        margin: EdgeInsets.only(top: 50),
         child: Text(
           'Tabungan Sampah',
           style: primaryTextStyle.copyWith(
@@ -209,7 +352,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Organik',
           hint: 'Jumlah Sampah Organik',
-          icon: 'assets/icon_ts_organik.svg',
+          icon: 'assets/icon_ts_organik.png',
           controller: organikController,
         ),
       );
@@ -222,7 +365,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Plastik',
           hint: 'Jumlah Sampah Plastik',
-          icon: 'assets/icon_ts_plastik.svg',
+          icon: 'assets/icon_ts_plastik.png',
           controller: plastikController,
         ),
       );
@@ -235,7 +378,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Kertas',
           hint: 'Jumlah Sampah Kertas',
-          icon: 'assets/icon_ts_kertas.svg',
+          icon: 'assets/icon_ts_kertas.png',
           controller: kertasController,
         ),
       );
@@ -248,7 +391,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Besi',
           hint: 'Jumlah Sampah Besi',
-          icon: 'assets/icon_ts_besi.svg',
+          icon: 'assets/icon_ts_besi.png',
           controller: organikController,
         ),
       );
@@ -261,7 +404,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         child: CustomTextFormTabungan(
           title: 'Pecah belah',
           hint: 'Jumlah Sampah Pecah belah',
-          icon: 'assets/icon_ts_kaca.svg',
+          icon: 'assets/icon_ts_kaca.png',
           controller: organikController,
         ),
       );
@@ -309,21 +452,29 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         margin: EdgeInsets.symmetric(horizontal: 30),
         child: Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                perjalananInput(),
-                nasabahInput(),
-                tabunganTitle(),
-                organikInput(),
-                plastikInput(),
-                kertasInput(),
-                besiInput(),
-                kacaInput(),
-                isLoading ? buttonLoading() : buttonSimpan(),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // perjalananInput(),
+              // nasabahInput(),
+              header(),
+              tabunganTitle(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      organikInput(),
+                      plastikInput(),
+                      kertasInput(),
+                      besiInput(),
+                      kacaInput(),
+                      isLoading ? buttonLoading() : buttonSimpan(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

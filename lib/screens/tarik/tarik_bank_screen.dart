@@ -24,6 +24,8 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
   }
 
   int bankSelected = 0;
+  String bankName = '';
+
   bool isBank = false;
   bool isLoading = false;
   bool errorBank = false;
@@ -54,6 +56,7 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
         MaterialPageRoute(
           builder: (context) => TarikKonfirmasiScreen(
             idBank: bankSelected,
+            bankName: bankName,
             norek: noRekController.text,
             name: nameController.text,
             nominal: int.parse(nominalController.text),
@@ -98,6 +101,7 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
 
                       // SELECTED BANK
                       bankSelected = bankProvider.banks[index].id!;
+                      bankName = bankProvider.banks[index].name!;
 
                       // SELECT BANK OR EWALLET081
                       if (bankProvider.banks[index].type == 'BANK') {
@@ -163,6 +167,7 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
               child: TextFormField(
                 keyboardType: TextInputType.number,
                 controller: noRekController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   // NULL
                   if (value!.isEmpty) {
@@ -201,6 +206,8 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: nameController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textCapitalization: TextCapitalization.characters,
                 validator: (value) {
                   // NULL
                   if (value!.isEmpty) {

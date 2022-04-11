@@ -1,15 +1,40 @@
+import 'package:ewaste/models/nasabah_model.dart';
+import 'package:ewaste/screens/sampah_campuran_screen.dart';
+import 'package:ewaste/screens/sampah_terpilah_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
 
-class InputSampahScreen extends StatelessWidget {
-  const InputSampahScreen({Key? key}) : super(key: key);
+class InputSampahScreen extends StatefulWidget {
+  final NasabahModel nasabah;
+
+  InputSampahScreen({Key? key, required this.nasabah}) : super(key: key);
+
+  @override
+  State<InputSampahScreen> createState() => _InputSampahScreenState();
+}
+
+class _InputSampahScreenState extends State<InputSampahScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    print(widget.nasabah.name);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     // SAMPAH TERPILAH
     Widget terpilah() {
       return GestureDetector(
-        onTap: () => Navigator.pushNamed(context, '/sampah-terpilah'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  SampahTerpilahScreen(nasabah: widget.nasabah),
+            ),
+          );
+        },
         child: Container(
           margin: EdgeInsets.only(top: 50),
           width: double.infinity,
@@ -18,6 +43,7 @@ class InputSampahScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: whiteColor,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: secondaryTextColor),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.03),
@@ -58,7 +84,15 @@ class InputSampahScreen extends StatelessWidget {
     // SAMPAH CAMPURAN
     Widget campuran() {
       return GestureDetector(
-        onTap: () => Navigator.pushNamed(context, '/sampah-campuran'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  SampahCampuranScreen(nasabah: widget.nasabah),
+            ),
+          );
+        },
         child: Container(
           margin: EdgeInsets.only(top: 30),
           width: double.infinity,
@@ -67,6 +101,7 @@ class InputSampahScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: whiteColor,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: secondaryTextColor),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.03),
@@ -105,7 +140,7 @@ class InputSampahScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: backgorundColor,
+      backgroundColor: whiteColor,
       appBar: AppBar(
         backgroundColor: primaryColor,
         centerTitle: true,

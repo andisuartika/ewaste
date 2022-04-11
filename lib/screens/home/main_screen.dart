@@ -1,9 +1,12 @@
+import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/page_provider.dart';
 import 'package:ewaste/screens/home/home_screen.dart';
 import 'package:ewaste/screens/home/input_sampah_screen.dart';
 import 'package:ewaste/screens/home/pesan_screen.dart';
 import 'package:ewaste/screens/home/profile_screen.dart';
 import 'package:ewaste/screens/home/riwayat_screen.dart';
+import 'package:ewaste/screens/wallet_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,14 +22,20 @@ class MainScrenn extends StatefulWidget {
 
 class _MainScrennState extends State<MainScrenn> {
   int currentIndex = 0;
+  bool isNasabah = true;
 
   @override
   Widget build(BuildContext context) {
     // PAGE PROVIDER
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserModel user = authProvider.user;
 
     setState(() {
       currentIndex = widget.pageIndex;
+      if (user.roles != 'NASABAH') {
+        isNasabah = false;
+      }
     });
 
     // SHOW BOTTOM SHEET
@@ -121,12 +130,26 @@ class _MainScrennState extends State<MainScrenn> {
     // FLOATING BUTTON SAMPAH
     Widget addButton() {
       return FloatingActionButton(
-        onPressed: showBottomSheet,
+        onPressed: isNasabah
+            ? () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WalletScreen(),
+                  ),
+                );
+              }
+            : showBottomSheet,
         backgroundColor: primaryDarkColor,
-        child: SvgPicture.asset(
-          'assets/icon_add.svg',
-          width: 40,
-        ),
+        child: isNasabah
+            ? SvgPicture.asset(
+                'assets/icon_wallet.svg',
+                width: 26,
+              )
+            : SvgPicture.asset(
+                'assets/icon_add.svg',
+                width: 40,
+              ),
       );
     }
 
@@ -245,7 +268,7 @@ class _MainScrennState extends State<MainScrenn> {
           return RiwayatScreen();
           break;
         case 2:
-          return InputSampahScreen();
+          return HomeScreen();
           break;
         case 3:
           return PesanScreen();

@@ -5,7 +5,6 @@ import 'package:ewaste/providers/page_provider.dart';
 import 'package:ewaste/providers/sampah_provider.dart';
 import 'package:ewaste/providers/slider_provider.dart';
 import 'package:ewaste/screens/cari_nasabah_screen.dart';
-import 'package:ewaste/screens/home/input_sampah_screen.dart';
 import 'package:ewaste/screens/home/main_screen.dart';
 import 'package:ewaste/screens/konfirmasi_iuran_sampah_screen.dart';
 import 'package:ewaste/screens/konfirmasi_tabungan_screen.dart';
@@ -16,23 +15,100 @@ import 'package:ewaste/screens/profile/ubah_password_screen.dart';
 import 'package:ewaste/screens/profile/ubah_profile_screen.dart';
 import 'package:ewaste/screens/profile/versi_aplikasi_screen.dart';
 import 'package:ewaste/screens/qr_screen.dart';
-import 'package:ewaste/screens/sampah_campuran_screen.dart';
-import 'package:ewaste/screens/sampah_terpilah_screen.dart';
 import 'package:ewaste/screens/login_screen.dart';
 import 'package:ewaste/screens/register_screen.dart';
 import 'package:ewaste/screens/splash_screen.dart';
 import 'package:ewaste/screens/tarik/tarik_bank_screen.dart';
 import 'package:ewaste/screens/wallet_screen.dart';
 import 'package:ewaste/screens/welcome_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+}
+
+late AndroidNotificationChannel channel;
+
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  if (!kIsWeb) {
+    channel = const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      'This channel is used for important notifications.', // description
+      importance: Importance.high,
+    );
+
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channel.description,
+              icon: 'launch_background',
+            ),
+          ),
+        );
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Notification Clicked!');
+      // Navigation to
+    });
+
+    // GET TOKEN
+    FirebaseMessaging.instance.getToken().then((newToken) {
+      print("FCM Token : ");
+      print(newToken);
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

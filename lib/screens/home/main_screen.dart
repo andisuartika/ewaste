@@ -8,9 +8,11 @@ import 'package:ewaste/screens/home/profile_screen.dart';
 import 'package:ewaste/screens/home/riwayat_screen.dart';
 import 'package:ewaste/screens/wallet_screen.dart';
 import 'package:ewaste/theme.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScrenn extends StatefulWidget {
   final int pageIndex;
@@ -23,6 +25,18 @@ class MainScrenn extends StatefulWidget {
 class _MainScrennState extends State<MainScrenn> {
   int currentIndex = 0;
   bool isNasabah = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    subscribe();
+    super.initState();
+  }
+
+  // FCM SUBSCRIBE
+  void subscribe() async {
+    await FirebaseMessaging.instance.subscribeToTopic('allDevice');
+  }
 
   @override
   Widget build(BuildContext context) {

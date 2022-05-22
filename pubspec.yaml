@@ -53,6 +53,12 @@ dependencies:
   cached_network_image: ^3.2.0
   image_cropper: ^1.5.0
   dotted_line: ^3.1.0
+  firebase_messaging: ^10.0.7
+  flutter_local_notifications: ^8.2.0
+  firebase_core: ^1.6.0
+
+dependency_overrides:   
+  firebase_messaging_platform_interface: 3.1.6
 
 dev_dependencies:
   flutter_test:

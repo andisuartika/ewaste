@@ -1,3 +1,5 @@
+import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/transaksi_provider.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/loading_button.dart';
@@ -6,33 +8,30 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../../theme.dart';
+import '../theme.dart';
 
-class TarikKonfirmasiScreen extends StatefulWidget {
-  final int idBank;
-  final String bankName;
-  final String norek;
-  final String name;
-  final int nominal;
-  const TarikKonfirmasiScreen({
-    Key? key,
-    required this.idBank,
-    required this.norek,
-    required this.name,
-    required this.nominal,
-    required this.bankName,
-  }) : super(key: key);
+class PembayaraniuranScreen extends StatefulWidget {
+  final UserModel user;
+  const PembayaraniuranScreen({Key? key, required this.user}) : super(key: key);
 
   @override
-  State<TarikKonfirmasiScreen> createState() => _TarikKonfirmasiScreenState();
+  State<PembayaraniuranScreen> createState() => _PembayaraniuranScreenState();
 }
 
-class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
+class _PembayaraniuranScreenState extends State<PembayaraniuranScreen> {
   final formkey = GlobalKey<FormState>();
   TextEditingController passController = TextEditingController(text: '');
 
   bool isLoading = false;
   bool isVisible = true;
+  bool isAccept = false;
+
+  void initState() {
+    if (int.parse(widget.user.points!) >
+        int.parse(widget.user.iurans!) + 2500) {
+      isAccept = true;
+    }
+  }
 
   // HIDDEN PASSWORD
   passwordHidden() async {
@@ -45,7 +44,6 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
   Widget build(BuildContext context) {
     TransaksiProvider transaksiProvider =
         Provider.of<TransaksiProvider>(context);
-
     // SUCCESS DIALOG
     Future<void> showSuccessDialog() async {
       return showDialog(
@@ -131,13 +129,9 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
         isLoading = true;
       });
 
-      if (await transaksiProvider.transaksiPoin(
-        nama: widget.name,
-        nomor: widget.norek,
-        bank: widget.idBank,
-        jumlah: widget.nominal,
-        password: passController.text,
-      )) {
+      if (await transaksiProvider.pembayaranIuran(
+          password: passController.text,
+          total: int.parse(widget.user.iurans!) + 2500)) {
         showSuccessDialog();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -156,15 +150,85 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
       });
     }
 
-    // RINCIAN PENARIKAN
-    Widget detailPenarikan() {
+    // POINT EWASTE
+    Widget pointEwaste() {
       return Container(
         margin: EdgeInsets.only(top: 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Detail Penarikan Poin',
+              'Poin Kamu',
+              style: primaryTextStyle.copyWith(
+                fontSize: 14,
+                fontWeight: semiBold,
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Container(
+              height: 60,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: secondaryTextColor),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/ewaste.png',
+                    width: 35,
+                    height: 35,
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Poin E-aste',
+                          style: primaryTextStyle.copyWith(
+                            fontSize: 10,
+                            fontWeight: medium,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        widget.user.points == null
+                            ? 'Rp0'
+                            : NumberFormat.currency(
+                                locale: 'id',
+                                symbol: 'Rp',
+                                decimalDigits: 0,
+                              ).format(int.parse(widget.user.points!)),
+                        style: greenTextStyle.copyWith(
+                          fontSize: 14,
+                          fontWeight: semiBold,
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    // RINCIAN PENARIKAN
+    Widget detailPenarikan() {
+      return Container(
+        margin: EdgeInsets.only(top: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Detail Pembayaran',
               style: primaryTextStyle.copyWith(
                 fontSize: 14,
                 fontWeight: semiBold,
@@ -178,7 +242,7 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Penerima',
+                    'Nasabah',
                     style: primaryTextStyle.copyWith(
                       fontSize: 12,
                       fontWeight: semiBold,
@@ -196,27 +260,7 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
                         ),
                       ),
                       Text(
-                        widget.name.toUpperCase(),
-                        style: secondaryTextStyle.copyWith(
-                          fontSize: 12,
-                          fontWeight: medium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Bank',
-                          style: secondaryTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: regular,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '${widget.bankName} | ${widget.norek}',
+                        widget.user.name.toString(),
                         style: secondaryTextStyle.copyWith(
                           fontSize: 12,
                           fontWeight: medium,
@@ -245,7 +289,7 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Penarikan poin',
+                          'Iuran Sampah',
                           style: secondaryTextStyle.copyWith(
                             fontSize: 12,
                             fontWeight: regular,
@@ -257,7 +301,7 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
                           locale: 'id',
                           symbol: 'Rp',
                           decimalDigits: 0,
-                        ).format(widget.nominal),
+                        ).format(int.parse(widget.user.iurans.toString())),
                         style: primaryTextStyle.copyWith(
                           fontSize: 12,
                           fontWeight: medium,
@@ -312,7 +356,7 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
                     locale: 'id',
                     symbol: 'Rp',
                     decimalDigits: 0,
-                  ).format(widget.nominal + 2500),
+                  ).format(int.parse(widget.user.iurans.toString()) + 2500),
                   style: primaryTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: medium,
@@ -401,7 +445,7 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
         backgroundColor: primaryColor,
         centerTitle: true,
         title: Text(
-          'Konfirmasi',
+          'Pembayaran Iuran Sampah',
           style: whiteTextStyle.copyWith(
             fontSize: 16,
             fontWeight: semiBold,
@@ -418,11 +462,14 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
         margin: EdgeInsets.symmetric(horizontal: 30),
         child: Form(
           key: formkey,
-          child: Column(
-            children: [
-              detailPenarikan(),
-              kataSandi(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                pointEwaste(),
+                detailPenarikan(),
+                kataSandi(),
+              ],
+            ),
           ),
         ),
       ),
@@ -435,12 +482,24 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
             ? LoadingButton()
             : CustomButton(
                 text: 'Lanjutkan',
-                color: primaryColor,
-                press: () {
-                  if (formkey.currentState!.validate()) {
-                    handleTransaksi();
-                  }
-                },
+                color: isAccept ? primaryColor : secondaryTextColor,
+                press: isAccept
+                    ? () {
+                        if (formkey.currentState!.validate()) {
+                          handleTransaksi();
+                        }
+                      }
+                    : () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: redTextColor,
+                            content: Text(
+                              'Point Kamu Tidak Cukup!',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      },
               ),
       ),
     );

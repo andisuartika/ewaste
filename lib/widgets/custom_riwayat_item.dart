@@ -1,22 +1,56 @@
+import 'package:ewaste/models/transaksi_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../theme.dart';
 
-class CustomRiwayatItem extends StatelessWidget {
-  final String image;
-  final String title;
-  final String date;
-  final Color color;
-  final int nominal;
-
+class CustomRiwayatItem extends StatefulWidget {
+  final TransaksiModel transaksi;
   const CustomRiwayatItem({
     Key? key,
-    required this.image,
-    required this.title,
-    required this.date,
-    required this.nominal,
-    required this.color,
+    required this.transaksi,
   }) : super(key: key);
+
+  @override
+  State<CustomRiwayatItem> createState() => _CustomRiwayatItemState();
+}
+
+class _CustomRiwayatItemState extends State<CustomRiwayatItem> {
+  bool isTabungan = true;
+  String icon = '';
+  String title = '';
+  Color? color;
+
+  @override
+  void initState() {
+    if (widget.transaksi.jenisTransaksi == "TRANSAKSI MASUK") {
+      setState(() {
+        title = "Menabung Sampah";
+        icon = "assets/icon_riwayat_menabung.png";
+        color = primaryColor;
+      });
+    } else if (widget.transaksi.jenisTransaksi == "TRANSAKSI POINT") {
+      setState(() {
+        title = "Tarik Tabungan";
+        icon = "assets/icon_riwayat_tarik.png";
+        color = redTextColor;
+      });
+    } else if (widget.transaksi.jenisTransaksi == "TRANSAKSI IURAN") {
+      setState(() {
+        title = "Iuran Sampah";
+        icon = "assets/icon_riwayat_iuran.png";
+        color = redTextColor;
+      });
+    } else if (widget.transaksi.jenisTransaksi ==
+        "TRANSAKSI PEMBAYARAN IURAN") {
+      setState(() {
+        title = "Pembarayan Iuran Sampah";
+        icon = "assets/icon_riwayat_iuran.png";
+        color = redTextColor;
+      });
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +71,7 @@ class CustomRiwayatItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: AssetImage(image),
+                      image: AssetImage(icon),
                     ),
                   ),
                 ),
@@ -54,12 +88,15 @@ class CustomRiwayatItem extends StatelessWidget {
                           fontSize: 12,
                           fontWeight: semiBold,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(
                         height: 3,
                       ),
                       Text(
-                        date,
+                        widget.transaksi.date.toString().substring(0, 10) +
+                            ' | ' +
+                            widget.transaksi.date.toString().substring(11, 16),
                         style: primaryTextStyle.copyWith(
                           fontSize: 8,
                           fontWeight: light,
@@ -69,7 +106,13 @@ class CustomRiwayatItem extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '+ $nominal Points',
+                  NumberFormat.currency(
+                    locale: 'id',
+                    symbol: 'Rp',
+                    decimalDigits: 0,
+                  ).format(
+                    int.parse(widget.transaksi.total!),
+                  ),
                   style: greenTextStyle.copyWith(
                     color: color,
                     fontWeight: semiBold,

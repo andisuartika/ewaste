@@ -4,9 +4,12 @@ import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/loading_button.dart';
 import 'package:ewaste/widgets/profile_item.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../theme.dart';
 
@@ -25,13 +28,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     bool isLoading = false;
 
+    _launch(url) async {
+      if (await canLaunch(url)) {
+        await launch(
+          url,
+          forceWebView: false,
+        );
+      } else {
+        print("Not supported");
+      }
+    }
+
     // LOGOUT HANDLE
     handleLogout() async {
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+
       setState(() {
         isLoading = true;
       });
 
-      if (await authProvider.logout(user.token)) {
+      if (await authProvider.logout(token: user.token!, fcmToken: fcmToken!)) {
         Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -250,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Widget akun() {
       return Container(
         margin: EdgeInsets.only(top: 24),
-        height: 150,
+        height: 200,
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 30),
         decoration: BoxDecoration(
@@ -271,6 +287,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(
               height: 5,
+            ),
+            user.roles == "USER"
+                ? ProfileItem(
+                    icon: 'assets/icon_gabung_nasabah.svg',
+                    title: 'Gabung Menjadi Nasabah E-Waste',
+                    press: () {
+                      var url =
+                          'https://api.whatsapp.com/send?phone=6283159409115&text=Hi%2C%20Admin%20E-Waste%20%20%F0%9F%98%83%20!%20Saya%20ingin%20bergabung%20menjadi%20Nasabah%20E-Waste.%0ANama%20%3A%20${user.name.toString()}%0AEmail%20%3A%20${user.email.toString()}%0ATerima%20kasih%20%F0%9F%8D%83';
+
+                      _launch(url);
+                    },
+                  )
+                : ProfileItem(
+                    icon: 'assets/icon_gabung_nasabah.svg',
+                    title: 'Kamu Sebagai ${user.roles} E-Waste',
+                    press: () {},
+                  ),
+            Divider(
+              thickness: 1,
+              color: secondaryTextColor.withOpacity(0.5),
             ),
             ProfileItem(
               icon: 'assets/icon_edit_profile.svg',

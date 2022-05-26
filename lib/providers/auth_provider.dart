@@ -1,6 +1,7 @@
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/services/auth_service.dart';
 import 'package:ewaste/utils/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -66,6 +67,19 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // UPDATE TOKEN
+  Future<bool> fcmToken({
+    required String fcmToken,
+  }) async {
+    try {
+      bool res = await AuthService().fcmToken(fcmToken: fcmToken);
+      return res;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   // // EDIT PROFILE
   // Future<bool> editProfile({
   //   required String name,
@@ -117,10 +131,13 @@ class AuthProvider with ChangeNotifier {
   }
 
   // LOGOUT
-  Future<bool> logout(_token) async {
+  Future<bool> logout({
+    required String token,
+    required String fcmToken,
+  }) async {
     try {
       // API LOGOUT
-      bool res = await AuthService().logout(token: _token);
+      bool res = await AuthService().logout(token: token, fcmToken: fcmToken);
       print('authprov :' + res.toString());
       // REMOVE TOKEN
       UserPreferences().removeToken();

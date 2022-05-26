@@ -1,9 +1,11 @@
 import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/bank_provider.dart';
+import 'package:ewaste/providers/notification_provider.dart';
 import 'package:ewaste/providers/page_provider.dart';
 import 'package:ewaste/providers/sampah_provider.dart';
 import 'package:ewaste/providers/slider_provider.dart';
+import 'package:ewaste/providers/transaksi_provider.dart';
 import 'package:ewaste/screens/cari_nasabah_screen.dart';
 import 'package:ewaste/screens/home/main_screen.dart';
 import 'package:ewaste/screens/konfirmasi_iuran_sampah_screen.dart';
@@ -77,36 +79,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null && !kIsWeb) {
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channel.description,
-              icon: 'launch_background',
-            ),
-          ),
-        );
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Notification Clicked!');
-      // Navigation to
-    });
-
     // GET TOKEN
     FirebaseMessaging.instance.getToken().then((newToken) {
       print("FCM Token : ");
       print(newToken);
     });
+
     super.initState();
   }
 
@@ -132,6 +110,12 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => BankProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => TransaksiProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => NotificationProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -140,7 +124,7 @@ class _MyAppState extends State<MyApp> {
           '/welcome': (context) => WelcomeScreen(),
           '/register': (context) => RegisterScreen(),
           '/login': (context) => LoginScreen(),
-          '/main': (context) => MainScrenn(),
+          '/main': (context) => MainScreen(),
           // '/sampah-terpilah': (context) => SampahTerpilahScreen(),
           // '/sampah-campuran': (context) => SampahCampuranScreen(),
           '/konfirmasi-tabungan': (context) => KonfirmasiTabunganScreen(),
@@ -155,6 +139,8 @@ class _MyAppState extends State<MyApp> {
           '/cari-nasabah': (context) => CariNasabahScreen(),
           '/tarik-bank': (context) => TarikBankScreen(),
           '/tabungan-nasabah': (context) => WalletScreen(),
+          '/transaksi': (context) => MainScreen(pageIndex: 1),
+          '/notification': (context) => MainScreen(pageIndex: 3),
         },
       ),
     );

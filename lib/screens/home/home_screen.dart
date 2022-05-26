@@ -8,13 +8,15 @@ import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/sampah_provider.dart';
-import 'package:ewaste/screens/detail_category_screen.dart';
+import 'package:ewaste/providers/slider_provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:ewaste/screens/webview_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/article_item.dart';
 import 'package:ewaste/widgets/category_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -26,26 +28,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<SliderModel>? bannerList;
-  bool isLoading = true;
+  bool isLoading = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      loadData();
-    });
-  }
-
-  Future loadData() async {
-    Timer(Duration(seconds: 1), () {
-      setState(() {
-        bannerList = slidersFaker;
-        isLoading = false;
-      });
-    });
   }
 
   Widget build(BuildContext context) {
@@ -53,6 +41,21 @@ class _HomeScreenState extends State<HomeScreen> {
     UserModel user = authProvider.user;
     ArticleProvider articleProvider = Provider.of<ArticleProvider>(context);
     SampahProvider sampahProvider = Provider.of<SampahProvider>(context);
+    SliderProvider sliderProvider = Provider.of<SliderProvider>(context);
+    RefreshController refreshController = RefreshController();
+
+    // REFRESH
+    void _onRefresh() async {
+      // monitor network fetch
+      await Future.delayed(Duration(milliseconds: 10));
+      Provider.of<AuthProvider>(context, listen: false).getUser(user.token);
+      Provider.of<ArticleProvider>(context, listen: false).getArticles();
+
+      Provider.of<SampahProvider>(context, listen: false).getSampah();
+
+      // if failed,use refreshFailed()
+      refreshController.refreshCompleted();
+    }
 
     // HEADER
     Widget header() {
@@ -214,7 +217,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 5,
               ),
               Text(
-                user.points == null ? "0" : user.points.toString(),
+                user.points == null
+                    ? "Rp0"
+                    : NumberFormat.currency(
+                        locale: 'id',
+                        symbol: 'Rp',
+                        decimalDigits: 0,
+                      ).format(int.parse(user.points!)),
                 style: whiteTextStyle.copyWith(
                   fontSize: 30,
                   fontWeight: semiBold,
@@ -282,122 +291,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       )
                       .toList(),
-              // PLASTIK
-              // GestureDetector(
-              //   onTap: () {},
-              //   child: Column(
-              //     children: [
-              //       Container(
-              //         width: 50,
-              //         height: 50,
-              //         decoration: BoxDecoration(
-              //           color: primaryColor,
-              //           borderRadius: BorderRadius.circular(10),
-              //           image: DecorationImage(
-              //             image: AssetImage('assets/icon_js_plastik.png'),
-              //           ),
-              //         ),
-              //       ),
-              //       SizedBox(
-              //         height: 5,
-              //       ),
-              //       Text(
-              //         'Plastik',
-              //         style: secondaryTextStyle.copyWith(
-              //           fontSize: 10,
-              //           fontWeight: light,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // // KERTAS
-              // GestureDetector(
-              //   onTap: () {},
-              //   child: Column(
-              //     children: [
-              //       Container(
-              //         width: 50,
-              //         height: 50,
-              //         decoration: BoxDecoration(
-              //           color: primaryColor,
-              //           borderRadius: BorderRadius.circular(10),
-              //           image: DecorationImage(
-              //             image: AssetImage('assets/icon_js_kertas.png'),
-              //           ),
-              //         ),
-              //       ),
-              //       SizedBox(
-              //         height: 5,
-              //       ),
-              //       Text(
-              //         'Kertas',
-              //         style: secondaryTextStyle.copyWith(
-              //           fontSize: 10,
-              //           fontWeight: light,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // // BESI
-              // GestureDetector(
-              //   onTap: () {},
-              //   child: Column(
-              //     children: [
-              //       Container(
-              //         width: 50,
-              //         height: 50,
-              //         decoration: BoxDecoration(
-              //           color: primaryColor,
-              //           borderRadius: BorderRadius.circular(10),
-              //           image: DecorationImage(
-              //             image: AssetImage('assets/icon_js_besi.png'),
-              //           ),
-              //         ),
-              //       ),
-              //       SizedBox(
-              //         height: 5,
-              //       ),
-              //       Text(
-              //         'Besi',
-              //         style: secondaryTextStyle.copyWith(
-              //           fontSize: 10,
-              //           fontWeight: light,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // // KACA
-              // GestureDetector(
-              //   onTap: () {},
-              //   child: Column(
-              //     children: [
-              //       Container(
-              //         width: 50,
-              //         height: 50,
-              //         decoration: BoxDecoration(
-              //           color: primaryColor,
-              //           borderRadius: BorderRadius.circular(10),
-              //           image: DecorationImage(
-              //             image: AssetImage('assets/icon_js_kaca.png'),
-              //           ),
-              //         ),
-              //       ),
-              //       SizedBox(
-              //         height: 5,
-              //       ),
-              //       Text(
-              //         'Kaca',
-              //         style: secondaryTextStyle.copyWith(
-              //           fontSize: 10,
-              //           fontWeight: light,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ),
           ],
         ),
@@ -426,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               margin: EdgeInsets.all(15),
               child: CarouselSlider.builder(
-                itemCount: isLoading ? 3 : bannerList!.length,
+                itemCount: isLoading ? 3 : sliderProvider.sliders.length,
                 options: CarouselOptions(
                   aspectRatio: 2.5,
                   enlargeCenterPage: true,
@@ -454,7 +347,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   highlightColor: Colors.grey.shade100,
                                 )
                               : CachedNetworkImage(
-                                  imageUrl: bannerList![i].image.toString(),
+                                  imageUrl: sliderProvider.sliders[i].image
+                                      .toString(),
                                   height: 150,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) =>
@@ -476,7 +370,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: isLoading
                         ? () {}
                         : () {
-                            var url = bannerList![i].url;
+                            var url = sliderProvider.sliders[i].url;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -507,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Container(
               child: Text(
-                'Info yang bisa kamu baca',
+                'Artikel yang bisa kamu baca',
                 style: darkGreenTextStyle.copyWith(
                   fontSize: 12,
                   fontWeight: semiBold,
@@ -534,14 +428,18 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           header(),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  saldo(),
-                  jenisSampah(),
-                  slider(),
-                  article(),
-                ],
+            child: SmartRefresher(
+              controller: refreshController,
+              onRefresh: _onRefresh,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    saldo(),
+                    jenisSampah(),
+                    slider(),
+                    article(),
+                  ],
+                ),
               ),
             ),
           ),

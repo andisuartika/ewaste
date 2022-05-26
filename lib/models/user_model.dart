@@ -4,8 +4,8 @@ class UserModel {
   String? email;
   String? alamat;
   String? noHp;
-  int? points;
-  int? iurans;
+  String? points;
+  String? iurans;
   String? roles;
   String? profilePhotoPath;
   String? profilePhotoUrl;

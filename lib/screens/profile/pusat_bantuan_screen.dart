@@ -84,10 +84,10 @@ class _PusatBantuanScreenState extends State<PusatBantuanScreen> {
           ),
           ProfileItem(
             icon: 'assets/icon_cs_wa.svg',
-            title: '0812-2696-6999',
+            title: '0831-5940-9155',
             press: () {
               var url =
-                  'https://wa.me/6285728614399?text=Hi%20admin%20E-Waste%20Bali,%20';
+                  'https://wa.me/6283159409115?text=Hi%20admin%20E-Waste%20Bali,%20';
 
               _launch(url);
             },
@@ -110,7 +110,7 @@ class _PusatBantuanScreenState extends State<PusatBantuanScreen> {
           ),
           ProfileItem(
             icon: 'assets/icon_cs_telp.svg',
-            title: '+62 8572-8614-399',
+            title: '0831-5940-9155',
             press: () {
               var phone = '085728614399';
               var url = 'tel:' + phone;

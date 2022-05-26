@@ -225,7 +225,7 @@ class _UbahProfileScreenState extends State<UbahProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MainScrenn(
+                            builder: (context) => MainScreen(
                               pageIndex: 4,
                             ),
                           ),

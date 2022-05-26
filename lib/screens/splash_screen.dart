@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/providers/notification_provider.dart';
 import 'package:ewaste/providers/sampah_provider.dart';
+import 'package:ewaste/providers/slider_provider.dart';
+import 'package:ewaste/providers/transaksi_provider.dart';
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,6 +26,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Provider.of<ArticleProvider>(context, listen: false).getArticles();
 
     Provider.of<SampahProvider>(context, listen: false).getSampah();
+    Provider.of<SliderProvider>(context, listen: false).getSliders();
+    Provider.of<TransaksiProvider>(context, listen: false).getTransaksi();
+    Provider.of<NotificationProvider>(context, listen: false).getNotification();
   }
 
   cekLogin() async {
@@ -36,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
       print('login true');
       await Provider.of<AuthProvider>(context, listen: false).getUser(token);
     }
-
+    print('ISLOGIN : $islogin TOKEN : $token');
     islogin
         ? Navigator.pushNamed(context, '/main')
         : Navigator.pushNamed(context, '/welcome');

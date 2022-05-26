@@ -1,5 +1,6 @@
 import 'package:ewaste/faker/slider_faker.dart';
 import 'package:ewaste/models/slider_model.dart';
+import 'package:ewaste/services/content_service.dart';
 import 'package:flutter/material.dart';
 
 class SliderProvider with ChangeNotifier {
@@ -14,7 +15,7 @@ class SliderProvider with ChangeNotifier {
 
   Future<void> getSliders() async {
     try {
-      List<SliderModel> sliders = slidersFaker;
+      List<SliderModel> sliders = await ContentService().getSlider();
       _sliders = sliders;
     } catch (e) {
       print(e);

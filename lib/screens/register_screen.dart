@@ -3,6 +3,7 @@ import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/custom_text_form_field.dart';
 import 'package:ewaste/widgets/loading_button.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     // HANDLE REGISTER
     handleRegister() async {
+      String fcmToken = '';
+      // GET TOKEN
+      FirebaseMessaging.instance.getToken().then((newToken) {
+        setState(() {
+          fcmToken = newToken!;
+        });
+      });
+
       setState(() {
         isLoading = true;
       });
@@ -49,7 +58,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         email: emailController.text,
         password: passwordController.text,
       )) {
-        Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+        if (await authProvider.fcmToken(fcmToken: fcmToken)) {
+          Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

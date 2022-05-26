@@ -1,6 +1,10 @@
 import 'dart:math';
 
+import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/sampah_provider.dart';
+import 'package:ewaste/screens/konfirmasi_iuran_sampah_screen.dart';
+import 'package:ewaste/screens/pembayaran_iuran.dart';
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +21,8 @@ class _WalletScreenState extends State<WalletScreen> {
   @override
   Widget build(BuildContext context) {
     SampahProvider sampahProvider = Provider.of<SampahProvider>(context);
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserModel user = authProvider.user;
     double width = MediaQuery.of(context).size.width;
     List icons = [
       'assets/icon_js_organik.png',
@@ -142,10 +148,106 @@ class _WalletScreenState extends State<WalletScreen> {
       );
     }
 
+    // IURAN SAMPAH
+    Widget iuranSampah() {
+      return Container(
+        margin: EdgeInsets.only(
+          top: 30,
+          left: 30,
+          right: 30,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Text(
+                'Tabungan Sampah',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 14,
+                  fontWeight: semiBold,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PembayaraniuranScreen(
+                      user: user,
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                height: 65,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: backgorundColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 35,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                          image: AssetImage("assets/icon_js_iuran.png"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Text(
+                        "Iuran Sampah",
+                        style: greenTextStyle.copyWith(
+                          color: redTextColor,
+                          fontSize: 14,
+                          fontWeight: medium,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      user.iurans == null
+                          ? "Rp0"
+                          : NumberFormat.currency(
+                              locale: 'id',
+                              symbol: 'Rp',
+                              decimalDigits: 0,
+                            ).format(int.parse(user.iurans.toString())),
+                      style: primaryTextStyle.copyWith(
+                        color: redTextColor,
+                        fontSize: 16,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     // DETAIL TABUNGAN SAMPAH
     Widget detailTabungan() {
       return Container(
-        margin: EdgeInsets.all(30),
+        margin: EdgeInsets.only(
+          top: 30,
+          left: 30,
+          right: 30,
+          bottom: 30,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -240,7 +342,12 @@ class _WalletScreenState extends State<WalletScreen> {
           header(),
           Expanded(
             child: SingleChildScrollView(
-              child: detailTabungan(),
+              child: Column(
+                children: [
+                  int.parse(user.iurans!) > 0 ? iuranSampah() : SizedBox(),
+                  detailTabungan(),
+                ],
+              ),
             ),
           ),
         ],

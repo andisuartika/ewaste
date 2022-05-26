@@ -9,26 +9,68 @@ import 'package:ewaste/screens/home/riwayat_screen.dart';
 import 'package:ewaste/screens/wallet_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MainScrenn extends StatefulWidget {
+import '../../main.dart';
+
+class MainScreen extends StatefulWidget {
   final int pageIndex;
-  const MainScrenn({Key? key, this.pageIndex = 0}) : super(key: key);
+  const MainScreen({Key? key, this.pageIndex = 0}) : super(key: key);
 
   @override
-  _MainScrennState createState() => _MainScrennState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScrennState extends State<MainScrenn> {
+class _MainScreenState extends State<MainScreen> {
   int currentIndex = 0;
-  bool isNasabah = true;
+  bool isPetugas = true;
 
   @override
   void initState() {
     // TODO: implement initState
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channel.description,
+              icon: 'launch_background',
+            ),
+          ),
+        );
+      }
+    });
+
+    // KETIKA NOTIFIKASI DI KLIK DAN KEADAAN ON TERMINATE
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        var _routeName = message.data['route'];
+        Navigator.of(context).pushNamed(_routeName);
+        print('Notification Clicked!!');
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (message != null) {
+        var _routeName = message.data['route'];
+        Navigator.of(context).pushNamed(_routeName);
+        print('Notification Clicked!!');
+      }
+      // Navigation to
+    });
+
     subscribe();
     super.initState();
   }
@@ -47,8 +89,10 @@ class _MainScrennState extends State<MainScrenn> {
 
     setState(() {
       currentIndex = widget.pageIndex;
-      if (user.roles != 'NASABAH') {
-        isNasabah = false;
+      if (user.roles != 'PETUGAS') {
+        isPetugas = false;
+      } else if (user.roles != 'ADMIN') {
+        isPetugas = false;
       }
     });
 
@@ -144,25 +188,25 @@ class _MainScrennState extends State<MainScrenn> {
     // FLOATING BUTTON SAMPAH
     Widget addButton() {
       return FloatingActionButton(
-        onPressed: isNasabah
-            ? () {
+        onPressed: isPetugas
+            ? showBottomSheet
+            : () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => WalletScreen(),
                   ),
                 );
-              }
-            : showBottomSheet,
+              },
         backgroundColor: primaryDarkColor,
-        child: isNasabah
+        child: isPetugas
             ? SvgPicture.asset(
-                'assets/icon_wallet.svg',
-                width: 26,
-              )
-            : SvgPicture.asset(
                 'assets/icon_add.svg',
                 width: 40,
+              )
+            : SvgPicture.asset(
+                'assets/icon_wallet.svg',
+                width: 26,
               ),
       );
     }

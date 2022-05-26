@@ -1,13 +1,22 @@
+import 'package:ewaste/providers/notification_provider.dart';
 import 'package:ewaste/widgets/custom_pesan_item.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../theme.dart';
 
-class PesanScreen extends StatelessWidget {
+class PesanScreen extends StatefulWidget {
   const PesanScreen({Key? key}) : super(key: key);
 
   @override
+  State<PesanScreen> createState() => _PesanScreenState();
+}
+
+class _PesanScreenState extends State<PesanScreen> {
+  @override
   Widget build(BuildContext context) {
+    NotificationProvider notificationProvider =
+        Provider.of<NotificationProvider>(context);
     // HEADER
     Widget header() {
       return AppBar(
@@ -33,56 +42,16 @@ class PesanScreen extends StatelessWidget {
             right: 30,
             left: 30,
             bottom: 30,
+            top: 10,
           ),
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: [
-              CustomPesanItem(
-                date: '10 Nov 2021 13:00',
-                pesan:
-                    'Kamu berhasil manabung sampah, cek points yang sudah kamu kampulkan sekarang',
-              ),
-              CustomPesanItem(
-                date: '10 Nov 2021 13:00',
-                pesan:
-                    'Kamu berhasil menukarkan points kamu dengan uang tunaj, jangan lupa menabung lagi :)',
-              ),
-              CustomPesanItem(
-                date: '10 Nov 2021 13:00',
-                pesan:
-                    'Yuk nabung sampah lagi, kumpulkan points kamu sebanyak banyaknya',
-              ),
-              CustomPesanItem(
-                date: '10 Nov 2021 13:00',
-                pesan:
-                    'Kamu berhasil manabung sampah, cek points yang sudah kamu kampulkan sekarang',
-              ),
-              CustomPesanItem(
-                date: '10 Nov 2021 13:00',
-                pesan:
-                    'Kamu berhasil manabung sampah, cek points yang sudah kamu kampulkan sekarang',
-              ),
-              CustomPesanItem(
-                date: '10 Nov 2021 13:00',
-                pesan:
-                    'Kamu berhasil manabung sampah, cek points yang sudah kamu kampulkan sekarang',
-              ),
-              CustomPesanItem(
-                date: '10 Nov 2021 13:00',
-                pesan:
-                    'Kamu berhasil manabung sampah, cek points yang sudah kamu kampulkan sekarang',
-              ),
-              CustomPesanItem(
-                date: '10 Nov 2021 13:00',
-                pesan:
-                    'Kamu berhasil manabung sampah, cek points yang sudah kamu kampulkan sekarang',
-              ),
-              CustomPesanItem(
-                date: '10 Nov 2021 13:00',
-                pesan:
-                    'Kamu berhasil manabung sampah, cek points yang sudah kamu kampulkan sekarang',
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: notificationProvider.notification
+                  .map((notification) => CustomPesanItem(
+                        notification: notification,
+                      ))
+                  .toList(),
+            ),
           ),
         ),
       );
@@ -119,8 +88,7 @@ class PesanScreen extends StatelessWidget {
     return Column(
       children: [
         header(),
-        pesan(),
-        // empty(),
+        notificationProvider.notification.length > 0 ? pesan() : empty(),
       ],
     );
   }

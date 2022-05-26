@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/bank_provider.dart';
 import 'package:ewaste/screens/tarik/tarik_konfirmasi_screen.dart';
 import 'package:ewaste/theme.dart';
@@ -33,6 +35,9 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserModel user = authProvider.user;
+
     final formkey = GlobalKey<FormState>();
     BankProvider bankProvider = Provider.of<BankProvider>(context);
     TextEditingController noRekController = TextEditingController(text: '');
@@ -286,11 +291,13 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
                       ),
                     ),
                     Text(
-                      NumberFormat.currency(
-                        locale: 'id',
-                        symbol: 'Rp',
-                        decimalDigits: 0,
-                      ).format(saldo),
+                      user.points == null
+                          ? 'Rp0'
+                          : NumberFormat.currency(
+                              locale: 'id',
+                              symbol: 'Rp',
+                              decimalDigits: 0,
+                            ).format(int.parse(user.points!)),
                       style: greenTextStyle.copyWith(
                         fontSize: 14,
                         fontWeight: semiBold,
@@ -339,9 +346,13 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
                   if (value!.isEmpty) {
                     return 'Masukkan Nominal';
                   }
-                  // // at least 7 char
-                  if (int.parse(value) >= saldo) {
-                    return 'Poin anda tidak cukup';
+                  // MINIMAL TRANSAKSI 50.000
+                  if (int.parse(value) < 50000) {
+                    return 'Minimal Rp50.000';
+                  }
+                  // POINT TIDAK CUKUP
+                  if (int.parse(value) + 2500 >= int.parse(user.points!)) {
+                    return 'Poin anda tidak cukup *biaya admin Rp2.500';
                   }
                   return null;
                 },

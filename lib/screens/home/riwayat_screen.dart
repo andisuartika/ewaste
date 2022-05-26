@@ -1,12 +1,22 @@
+import 'package:ewaste/providers/transaksi_provider.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/custom_riwayat_item.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class RiwayatScreen extends StatelessWidget {
+class RiwayatScreen extends StatefulWidget {
   const RiwayatScreen({Key? key}) : super(key: key);
 
   @override
+  State<RiwayatScreen> createState() => _RiwayatScreenState();
+}
+
+class _RiwayatScreenState extends State<RiwayatScreen> {
+  @override
   Widget build(BuildContext context) {
+    TransaksiProvider transaksiProvider =
+        Provider.of<TransaksiProvider>(context);
+
     // HEADER
     Widget header() {
       return AppBar(
@@ -32,60 +42,14 @@ class RiwayatScreen extends StatelessWidget {
             right: 30,
             left: 30,
             bottom: 30,
+            top: 10,
           ),
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: [
-              CustomRiwayatItem(
-                image: 'assets/icon_riwayat_menabung.png',
-                title: 'Menabung Sampah',
-                date: '10 November 2021 13:00',
-                nominal: 10000,
-                color: primaryColor,
-              ),
-              CustomRiwayatItem(
-                image: 'assets/icon_riwayat_menabung.png',
-                title: 'Menabung Sampah',
-                date: '10 November 2021 13:00',
-                nominal: 20000,
-                color: primaryColor,
-              ),
-              CustomRiwayatItem(
-                image: 'assets/icon_riwayat_tarik.png',
-                title: 'Tarik Tunai',
-                date: '10 November 2021 13:00',
-                nominal: 50000,
-                color: redTextColor,
-              ),
-              CustomRiwayatItem(
-                image: 'assets/icon_riwayat_menabung.png',
-                title: 'Menabung Sampah',
-                date: '10 November 2021 13:00',
-                nominal: 30000,
-                color: primaryColor,
-              ),
-              CustomRiwayatItem(
-                image: 'assets/icon_riwayat_menabung.png',
-                title: 'Menabung Sampah',
-                date: '10 November 2021 13:00',
-                nominal: 10000,
-                color: primaryColor,
-              ),
-              CustomRiwayatItem(
-                image: 'assets/icon_riwayat_tarik.png',
-                title: 'Tarik Tunai',
-                date: '10 November 2021 13:00',
-                nominal: 30000,
-                color: redTextColor,
-              ),
-              CustomRiwayatItem(
-                image: 'assets/icon_riwayat_menabung.png',
-                title: 'Menabung Sampah',
-                date: '10 November 2021 13:00',
-                nominal: 10000,
-                color: primaryColor,
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: transaksiProvider.transaksi
+                  .map((transaksi) => CustomRiwayatItem(transaksi: transaksi))
+                  .toList(),
+            ),
           ),
         ),
       );
@@ -132,8 +96,7 @@ class RiwayatScreen extends StatelessWidget {
     return Column(
       children: [
         header(),
-        // riwayat(),
-        empty(),
+        transaksiProvider.transaksi.length > 0 ? riwayat() : empty(),
       ],
     );
   }

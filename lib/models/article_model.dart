@@ -15,19 +15,19 @@ class ArticleModel {
 
   ArticleModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    image = json['image'];
+    image = json['cover'];
     title = json['title'];
-    desc = json['desc'];
-    url = json['url'];
+    desc = json['description'];
+    url = json['link'];
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'image': image,
+      'cover': image,
       'title': title,
-      'desc': desc,
-      'url': url,
+      'description': desc,
+      'link': url,
     };
   }
 }

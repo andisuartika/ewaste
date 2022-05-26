@@ -11,15 +11,15 @@ class SliderModel {
 
   SliderModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    image = json['image'];
-    url = json['url'];
+    image = json['gambar'];
+    url = json['link'];
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'image': image,
-      'url': url,
+      'gambar': image,
+      'link': url,
     };
   }
 }

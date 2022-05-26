@@ -1,5 +1,6 @@
 import 'package:ewaste/faker/article_faker.dart';
 import 'package:ewaste/models/article_model.dart';
+import 'package:ewaste/services/content_service.dart';
 import 'package:flutter/material.dart';
 
 class ArticleProvider with ChangeNotifier {
@@ -14,7 +15,7 @@ class ArticleProvider with ChangeNotifier {
 
   Future<void> getArticles() async {
     try {
-      List<ArticleModel> articles = articlesFaker;
+      List<ArticleModel> articles = await ContentService().getArticle();
       _articles = articles;
     } catch (e) {
       print(e);

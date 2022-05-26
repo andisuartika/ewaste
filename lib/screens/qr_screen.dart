@@ -38,7 +38,7 @@ class _QrScreenState extends State<QrScreen> {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MainScrenn(
+                      builder: (context) => MainScreen(
                         pageIndex: 0,
                       ),
                     ),

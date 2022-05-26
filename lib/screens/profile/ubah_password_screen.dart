@@ -92,7 +92,7 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MainScrenn(
+                            builder: (context) => MainScreen(
                               pageIndex: 4,
                             ),
                           ),

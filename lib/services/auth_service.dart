@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/utils/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   String baseUrl = 'https://wastebali.com/api';
@@ -68,6 +70,37 @@ class AuthService {
       return user;
     } else {
       throw Exception('Gagal Login');
+    }
+  }
+
+  // UPDATE FCM TOKEN
+  Future<bool> fcmToken({
+    required String fcmToken,
+  }) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token').toString();
+
+    var url = '$baseUrl/fcm-token';
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
+    var body = jsonEncode({
+      'token': fcmToken,
+    });
+
+    var response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'];
+      print(data);
+      return true;
+    } else {
+      throw Exception('Error Update Token!');
     }
   }
 
@@ -145,6 +178,7 @@ class AuthService {
     var url = '$baseUrl/user';
     var headers = {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
       'Authorization': token,
     };
 
@@ -153,6 +187,8 @@ class AuthService {
       headers: headers,
     );
 
+    print(response.body);
+
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
       UserModel user = UserModel.fromJson(data);
@@ -160,25 +196,33 @@ class AuthService {
 
       return user;
     } else {
+      UserPreferences().removeToken();
       throw Exception('Error Get User');
     }
   }
 
   Future<bool> logout({
     required String token,
+    required String fcmToken,
   }) async {
+    print(fcmToken);
     var url = '$baseUrl/logout';
     var headers = {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
       'Authorization': token,
     };
+    var body = jsonEncode({
+      'fcmToken': fcmToken,
+    });
     var response = await http.post(
       Uri.parse(url),
       headers: headers,
+      body: body,
     );
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      print(data);
+
       return true;
     } else {
       throw Exception('Error Logout');

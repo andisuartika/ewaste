@@ -1,6 +1,8 @@
 import 'package:ewaste/models/transaksi_model.dart';
+import 'package:ewaste/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../theme.dart';
 
@@ -26,7 +28,7 @@ class _CustomRiwayatItemState extends State<CustomRiwayatItem> {
     if (widget.transaksi.jenisTransaksi == "TRANSAKSI MASUK") {
       setState(() {
         title = "Menabung Sampah";
-        icon = "assets/icon_riwayat_menabung.png";
+        icon = "assets/icon_riwayat_tabungan.png";
         color = primaryColor;
       });
     } else if (widget.transaksi.jenisTransaksi == "TRANSAKSI POINT") {
@@ -35,7 +37,7 @@ class _CustomRiwayatItemState extends State<CustomRiwayatItem> {
         icon = "assets/icon_riwayat_tarik.png";
         color = redTextColor;
       });
-    } else if (widget.transaksi.jenisTransaksi == "TRANSAKSI IURAN") {
+    } else if (widget.transaksi.jenisTransaksi == "TRANSAKSI IURANS") {
       setState(() {
         title = "Iuran Sampah";
         icon = "assets/icon_riwayat_iuran.png";
@@ -111,7 +113,7 @@ class _CustomRiwayatItemState extends State<CustomRiwayatItem> {
                     symbol: 'Rp',
                     decimalDigits: 0,
                   ).format(
-                    int.parse(widget.transaksi.total!),
+                    widget.transaksi.total!,
                   ),
                   style: greenTextStyle.copyWith(
                     color: color,

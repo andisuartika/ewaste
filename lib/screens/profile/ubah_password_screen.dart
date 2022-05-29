@@ -3,6 +3,7 @@ import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/screens/home/main_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/custom_button.dart';
+import 'package:ewaste/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +22,9 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
   TextEditingController newPassController = TextEditingController(text: '');
   TextEditingController confrimNewPassController =
       TextEditingController(text: '');
-
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
-    bool isLoading = false;
-
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel user = authProvider.user;
 
@@ -248,15 +247,17 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
           horizontal: 30,
           vertical: 30,
         ),
-        child: CustomButton(
-          text: 'Ganti Kata sandi',
-          color: primaryColor,
-          press: () {
-            if (formkey.currentState!.validate()) {
-              handleChangePassword();
-            }
-          },
-        ),
+        child: isLoading
+            ? LoadingButton()
+            : CustomButton(
+                text: 'Ganti Kata sandi',
+                color: primaryColor,
+                press: () {
+                  if (formkey.currentState!.validate()) {
+                    handleChangePassword();
+                  }
+                },
+              ),
       ),
     );
   }

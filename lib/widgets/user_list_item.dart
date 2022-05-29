@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ewaste/models/nasabah_model.dart';
+import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/screens/home/input_sampah_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../theme.dart';
 
 class UserListitem extends StatelessWidget {
-  final NasabahModel nasabah;
+  final UserModel nasabah;
   const UserListitem({
     Key? key,
     required this.nasabah,
@@ -29,14 +30,24 @@ class UserListitem extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: nasabah.profilePhotoUrl.toString(),
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                nasabah.profilePhotoPath == null
+                    ? ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl:
+                              'http://wastebali.com/storage/usersProfile/user.png',
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: nasabah.profilePhotoUrl.toString(),
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                 SizedBox(
                   width: 10,
                 ),

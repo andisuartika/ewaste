@@ -1,14 +1,20 @@
+import 'dart:convert';
 import 'dart:math';
 
+import 'package:ewaste/models/tabungan_model.dart';
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/sampah_provider.dart';
-import 'package:ewaste/screens/konfirmasi_iuran_sampah_screen.dart';
+import 'package:ewaste/providers/tabungan_provider.dart';
 import 'package:ewaste/screens/pembayaran_iuran.dart';
+import 'package:ewaste/widgets/custom_tabungan_item.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({Key? key}) : super(key: key);
@@ -22,15 +28,10 @@ class _WalletScreenState extends State<WalletScreen> {
   Widget build(BuildContext context) {
     SampahProvider sampahProvider = Provider.of<SampahProvider>(context);
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    TabunganProvider tabunganProvider = Provider.of<TabunganProvider>(context);
     UserModel user = authProvider.user;
     double width = MediaQuery.of(context).size.width;
-    List icons = [
-      'assets/icon_js_organik.png',
-      'assets/icon_js_plastik.png',
-      'assets/icon_js_kertas.png',
-      'assets/icon_js_besi.png',
-      'assets/icon_js_kaca.png',
-    ];
+
     // HEADER
     Widget header() {
       return Container(
@@ -74,6 +75,7 @@ class _WalletScreenState extends State<WalletScreen> {
                     width: 5,
                   ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
@@ -88,11 +90,16 @@ class _WalletScreenState extends State<WalletScreen> {
                           locale: 'id',
                           symbol: 'Rp',
                           decimalDigits: 0,
-                        ).format(2500000),
+                        ).format(
+                          int.parse(
+                            tabunganProvider.tabungan.tabungan.toString(),
+                          ),
+                        ),
                         style: greenTextStyle.copyWith(
                           fontSize: 12,
                           fontWeight: semiBold,
                         ),
+                        textAlign: TextAlign.start,
                       )
                     ],
                   ),
@@ -118,6 +125,7 @@ class _WalletScreenState extends State<WalletScreen> {
                     width: 5,
                   ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
@@ -132,7 +140,9 @@ class _WalletScreenState extends State<WalletScreen> {
                           locale: 'id',
                           symbol: 'Rp',
                           decimalDigits: 0,
-                        ).format(500000),
+                        ).format(int.parse(
+                          tabunganProvider.tabungan.ditarik.toString(),
+                        )),
                         style: greenTextStyle.copyWith(
                           fontSize: 12,
                           fontWeight: semiBold,
@@ -263,56 +273,35 @@ class _WalletScreenState extends State<WalletScreen> {
             SizedBox(
               height: 15,
             ),
-            Column(children: [
-              ...sampahProvider.sampah
-                  .map(
-                    (sampah) => Container(
-                      width: double.infinity,
-                      height: 65,
-                      margin: EdgeInsets.only(bottom: 15),
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: backgorundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              color: primaryColor,
-                              borderRadius: BorderRadius.circular(8),
-                              image: DecorationImage(
-                                image: AssetImage(icons[sampah.id! - 1]),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Text(
-                              sampah.nama.toString(),
-                              style: greenTextStyle.copyWith(
-                                fontSize: 14,
-                                fontWeight: medium,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '${Random().nextInt(100 - 5)}Kg',
-                            style: primaryTextStyle.copyWith(
-                              fontSize: 16,
-                              fontWeight: semiBold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ]),
+            Column(
+              children: [
+                CustomTabunganItem(
+                  icon: 0,
+                  sampah: 'Organik',
+                  kuantitas: tabunganProvider.tabungan.organik.toString(),
+                ),
+                CustomTabunganItem(
+                  icon: 1,
+                  sampah: 'Plastik',
+                  kuantitas: tabunganProvider.tabungan.plastik.toString(),
+                ),
+                CustomTabunganItem(
+                  icon: 2,
+                  sampah: 'Kertas',
+                  kuantitas: tabunganProvider.tabungan.kertas.toString(),
+                ),
+                CustomTabunganItem(
+                  icon: 3,
+                  sampah: 'Logam & Besi',
+                  kuantitas: tabunganProvider.tabungan.logam.toString(),
+                ),
+                CustomTabunganItem(
+                  icon: 4,
+                  sampah: 'Pecah Belah',
+                  kuantitas: tabunganProvider.tabungan.kaca.toString(),
+                ),
+              ],
+            ),
           ],
         ),
       );
@@ -344,7 +333,7 @@ class _WalletScreenState extends State<WalletScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  int.parse(user.iurans!) > 0 ? iuranSampah() : SizedBox(),
+                  user.iurans! > 0 ? iuranSampah() : SizedBox(),
                   detailTabungan(),
                 ],
               ),

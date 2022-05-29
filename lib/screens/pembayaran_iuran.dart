@@ -27,8 +27,7 @@ class _PembayaraniuranScreenState extends State<PembayaraniuranScreen> {
   bool isAccept = false;
 
   void initState() {
-    if (int.parse(widget.user.points!) >
-        int.parse(widget.user.iurans!) + 2500) {
+    if (widget.user.points! > widget.user.iurans! + 2500) {
       isAccept = true;
     }
   }
@@ -130,8 +129,7 @@ class _PembayaraniuranScreenState extends State<PembayaraniuranScreen> {
       });
 
       if (await transaksiProvider.pembayaranIuran(
-          password: passController.text,
-          total: int.parse(widget.user.iurans!) + 2500)) {
+          password: passController.text, total: widget.user.iurans! + 2500)) {
         showSuccessDialog();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -204,7 +202,7 @@ class _PembayaraniuranScreenState extends State<PembayaraniuranScreen> {
                                 locale: 'id',
                                 symbol: 'Rp',
                                 decimalDigits: 0,
-                              ).format(int.parse(widget.user.points!)),
+                              ).format(widget.user.points!),
                         style: greenTextStyle.copyWith(
                           fontSize: 14,
                           fontWeight: semiBold,

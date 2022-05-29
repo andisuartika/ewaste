@@ -116,6 +116,7 @@ class AuthService {
     request.fields['name'] = user['name'];
     request.fields['noHp'] = user['noHp'];
     request.fields['alamat'] = user['alamat'];
+    print(user);
     if (filepath != '') {
       request.files.add(
           await http.MultipartFile.fromPath('profile_photo_path', filepath));
@@ -160,8 +161,6 @@ class AuthService {
       headers: headers,
       body: body,
     );
-
-    print(password);
 
     print(response.body);
     if (response.statusCode == 200) {

@@ -5,9 +5,9 @@ import '../theme.dart';
 
 class DetailTransaksiItem extends StatelessWidget {
   final String sampah;
-  final int jumlah;
+  final double jumlah;
   final int harga;
-  final int total;
+  final double total;
 
   const DetailTransaksiItem({
     Key? key,

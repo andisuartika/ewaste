@@ -3,12 +3,18 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../theme.dart';
 
-class WebViewScreen extends StatelessWidget {
+class WebViewScreen extends StatefulWidget {
   final String title;
   final String url;
   const WebViewScreen({Key? key, required this.title, required this.url})
       : super(key: key);
 
+  @override
+  State<WebViewScreen> createState() => _WebViewScreenState();
+}
+
+class _WebViewScreenState extends State<WebViewScreen> {
+  bool isLoading = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +22,7 @@ class WebViewScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         centerTitle: true,
         title: Text(
-          title,
+          widget.title,
           style: whiteTextStyle.copyWith(
             fontSize: 16,
             fontWeight: semiBold,
@@ -31,11 +37,24 @@ class WebViewScreen extends StatelessWidget {
           child: Icon(Icons.arrow_back_ios),
         ),
       ),
-      body: WebView(
-        javascriptMode: JavascriptMode.unrestricted,
-        initialUrl: url,
-      ),
+      body: Stack(children: [
+        WebView(
+          javascriptMode: JavascriptMode.unrestricted,
+          onPageFinished: (finish) {
+            setState(() {
+              isLoading = false;
+            });
+          },
+          initialUrl: widget.url,
+        ),
+        isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: primaryColor,
+                ),
+              )
+            : Stack(),
+      ]),
     );
-    ;
   }
 }

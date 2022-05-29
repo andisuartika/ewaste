@@ -1,9 +1,9 @@
 class SampahModel {
   int? id;
   String? nama;
-  String? harga;
   String? tentang;
   String? pengelolaan;
+  int? harga;
   String? image;
 
   SampahModel({

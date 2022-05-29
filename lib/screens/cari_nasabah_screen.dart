@@ -1,5 +1,5 @@
-import 'package:ewaste/faker/nasabah_faker.dart';
-import 'package:ewaste/models/nasabah_model.dart';
+import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/services/user_service.dart';
 import 'package:ewaste/widgets/user_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,34 +15,54 @@ class CariNasabahScreen extends StatefulWidget {
 
 class _CariNasabahScreenState extends State<CariNasabahScreen> {
   // TEXTEDITING CONTROLLER
-  TextEditingController searchConttroller = TextEditingController(text: '');
+  TextEditingController searchController = TextEditingController(text: '');
 
   // DATA NASABAH
-  List<NasabahModel>? nasabah;
+  List<UserModel> nasabah = [];
+  List<UserModel> _search = [];
+
+  bool isLoading = false;
 
   @override
   void initState() {
     // TODO: implement initState
-    nasabah = allNasabah;
+    fetchData();
 
     super.initState();
   }
 
-  bool _onSearch = false;
-
-  // SEARCHING
-  void searching(String search) {
-    final nasabahSearch = allNasabah.where((nasabahSearch) {
-      final titleLower = nasabahSearch.name.toString().toLowerCase();
-      final searchLower = search.toLowerCase();
-
-      return titleLower.contains(searchLower);
-    }).toList();
-
+  Future<Null> fetchData() async {
     setState(() {
-      this.nasabah = nasabahSearch;
+      isLoading = true;
+    });
+    nasabah.clear();
+    var users = await UserService().getUsers(search: '');
+    setState(() {
+      nasabah = users;
+      isLoading = false;
     });
   }
+
+  void searching(String search) async {
+    setState(() {
+      isLoading = true;
+    });
+    _search.clear();
+    if (searchController.text.isEmpty) {
+      var users = await UserService().getUsers(search: '');
+      setState(() {
+        nasabah = users;
+        isLoading = false;
+      });
+    }
+    var users = await UserService().getUsers(search: searchController.text);
+    setState(() {
+      nasabah = users;
+      isLoading = false;
+    });
+  }
+
+  bool _onSearch = false;
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +146,7 @@ class _CariNasabahScreenState extends State<CariNasabahScreen> {
                     Expanded(
                       child: TextFormField(
                         style: primaryTextStyle,
-                        controller: searchConttroller,
+                        controller: searchController,
                         onTap: () {
                           setState(() {
                             _onSearch = true;
@@ -170,13 +190,19 @@ class _CariNasabahScreenState extends State<CariNasabahScreen> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: nasabah!.length,
-                itemBuilder: (context, index) => UserListitem(
-                  nasabah: nasabah![index],
-                ),
-              ),
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: primaryColor,
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: nasabah.length,
+                      itemBuilder: (context, index) => UserListitem(
+                        nasabah: nasabah[index],
+                      ),
+                    ),
             )
           ],
         ),

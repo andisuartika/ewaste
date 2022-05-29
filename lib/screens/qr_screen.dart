@@ -1,8 +1,9 @@
+import 'package:ewaste/screens/detail_nasabah_screen.dart';
 import 'package:ewaste/screens/home/main_screen.dart';
+import 'package:ewaste/services/transaksi_service.dart';
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QrScreen extends StatefulWidget {
@@ -15,6 +16,7 @@ class QrScreen extends StatefulWidget {
 class _QrScreenState extends State<QrScreen> {
   bool _flashOn = false;
   bool _frontCam = false;
+  bool isLoading = false;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? _controller;
 
@@ -60,6 +62,18 @@ class _QrScreenState extends State<QrScreen> {
               ),
             ),
           ),
+          isLoading
+              ? Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    child: CircularProgressIndicator(
+                      color: whiteColor,
+                    ),
+                  ),
+                )
+              : SizedBox(),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -191,10 +205,25 @@ class _QrScreenState extends State<QrScreen> {
     setState(() {
       this._controller = controller;
     });
-    controller.scannedDataStream.listen((value) {
+    controller.scannedDataStream.listen((value) async {
       if (mounted) {
         _controller!.dispose();
-        print(value.code.toString());
+        setState(() {
+          isLoading = true;
+        });
+        var user =
+            await TransaksiService().getUser(kode: value.code.toString());
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailNasabahScreen(
+              nasabah: user,
+            ),
+          ),
+        );
+        setState(() {
+          isLoading = false;
+        });
       }
     });
   }

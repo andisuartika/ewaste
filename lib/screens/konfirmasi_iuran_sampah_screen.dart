@@ -1,12 +1,27 @@
+import 'package:ewaste/models/sampah_model.dart';
+import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/providers/perjalanan_provider.dart';
+import 'package:ewaste/services/sampah_service.dart';
+import 'package:ewaste/services/transaksi_service.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../theme.dart';
 
 class KonfirmasiIuranSampahScreen extends StatefulWidget {
-  const KonfirmasiIuranSampahScreen({Key? key}) : super(key: key);
+  final UserModel nasabah;
+  final SampahModel sampah;
+  final double kuantitas;
+  const KonfirmasiIuranSampahScreen(
+      {Key? key,
+      required this.sampah,
+      required this.nasabah,
+      required this.kuantitas})
+      : super(key: key);
 
   @override
   _KonfirmasiIuranSampahScreenState createState() =>
@@ -15,9 +30,13 @@ class KonfirmasiIuranSampahScreen extends StatefulWidget {
 
 class _KonfirmasiIuranSampahScreenState
     extends State<KonfirmasiIuranSampahScreen> {
+  bool isLoading = false;
+  @override
   @override
   Widget build(BuildContext context) {
-    bool isLoading = false;
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    PerjalananProvider perjalananProvider =
+        Provider.of<PerjalananProvider>(context);
 
     // DIALOG
     Future<void> showSuccessDialog() async {
@@ -104,7 +123,33 @@ class _KonfirmasiIuranSampahScreenState
       setState(() {
         isLoading = true;
       });
-      showSuccessDialog();
+
+      // SET DATA TO API
+      var item = [
+        {
+          'sampah': 6,
+          'kuantitas': double.parse(widget.kuantitas.toString()),
+        },
+      ];
+
+      if (await TransaksiService().transaksiTabungan(
+          idNasabah: widget.nasabah.id!,
+          item: item,
+          idPerjalanan: perjalananProvider.perjalanan.first.id!,
+          jenisTransaksi: 'TRANSAKSI IURANS',
+          total: int.parse(widget.sampah.harga.toString()))) {
+        showSuccessDialog();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: redTextColor,
+            content: Text(
+              'Transaksi Gagal dilakukan!',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
 
       setState(() {
         isLoading = false;
@@ -155,7 +200,7 @@ class _KonfirmasiIuranSampahScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Putu Andi Suartika',
+                      widget.nasabah.name.toString(),
                       style: secondaryTextStyle.copyWith(
                         fontSize: 12,
                         fontWeight: semiBold,
@@ -164,7 +209,7 @@ class _KonfirmasiIuranSampahScreenState
                     Container(
                       width: 200,
                       child: Text(
-                        'Jalan Pratu Praupan Sangket Sukasada Buleleng Bali',
+                        widget.nasabah.alamat.toString(),
                         style: secondaryTextStyle.copyWith(
                           fontSize: 10,
                           fontWeight: light,
@@ -197,7 +242,7 @@ class _KonfirmasiIuranSampahScreenState
               ),
             ),
             Text(
-              'Komang Artawan',
+              authProvider.user.name.toString(),
               style: secondaryTextStyle.copyWith(
                 fontSize: 12,
                 fontWeight: semiBold,
@@ -217,7 +262,7 @@ class _KonfirmasiIuranSampahScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Detail Tabungan',
+              'Detail Iuran',
               style: primaryTextStyle.copyWith(
                 fontSize: 12,
                 fontWeight: semiBold,
@@ -230,14 +275,7 @@ class _KonfirmasiIuranSampahScreenState
                 children: [
                   Expanded(
                     child: Text(
-                      'Sampah 25Kg ' +
-                          '( ' +
-                          NumberFormat.currency(
-                            locale: 'id',
-                            symbol: 'Rp ',
-                            decimalDigits: 0,
-                          ).format(500) +
-                          ' )',
+                      'Sampah ${widget.kuantitas.toString()} Kg',
                       style: secondaryTextStyle.copyWith(
                         fontSize: 10,
                         fontWeight: regular,
@@ -247,7 +285,7 @@ class _KonfirmasiIuranSampahScreenState
                   Text(
                     NumberFormat.currency(
                             locale: 'id', symbol: 'Rp ', decimalDigits: 0)
-                        .format(12500),
+                        .format(int.parse(widget.sampah.harga.toString())),
                     style: secondaryTextStyle.copyWith(
                       color: redTextColor,
                       fontSize: 12,
@@ -274,7 +312,9 @@ class _KonfirmasiIuranSampahScreenState
                   ),
                 ),
                 Text(
-                  'Rp 12.500',
+                  NumberFormat.currency(
+                          locale: 'id', symbol: 'Rp ', decimalDigits: 0)
+                      .format(int.parse(widget.sampah.harga.toString())),
                   style: primaryTextStyle.copyWith(
                     color: redTextColor,
                     fontSize: 14,

@@ -47,6 +47,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         isLoading = true;
       });
 
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: primaryColor,
+            ),
+          );
+        },
+      );
+
       if (await authProvider.logout(token: user.token!, fcmToken: fcmToken!)) {
         Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
       } else {

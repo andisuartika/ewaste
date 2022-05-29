@@ -3,6 +3,7 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:ewaste/models/nasabah_model.dart';
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/screens/konfirmasi_tabungan_screen.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/custom_text_form_tabungan.dart';
 import 'package:ewaste/widgets/loading_button.dart';
@@ -13,7 +14,7 @@ import 'package:provider/provider.dart';
 import '../theme.dart';
 
 class SampahTerpilahScreen extends StatefulWidget {
-  final NasabahModel nasabah;
+  final UserModel nasabah;
   const SampahTerpilahScreen({Key? key, required this.nasabah})
       : super(key: key);
 
@@ -23,15 +24,6 @@ class SampahTerpilahScreen extends StatefulWidget {
 
 class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  List<String> nasabah = [
-    'Andi Suartika',
-    'Kadek Wibawa',
-    'Putu Purnama',
-    'Nyoman Wenten',
-    'Ketut Ardika',
-    'Melsi Oktaviani'
-  ];
 
   TextEditingController kodeController = TextEditingController(text: '');
   TextEditingController nasabahController = TextEditingController(text: '');
@@ -54,7 +46,18 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
         isLoading = true;
       });
 
-      Navigator.pushNamed(context, '/konfirmasi-tabungan');
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => KonfirmasiTabunganScreen(
+              nasabah: widget.nasabah,
+              organik: organikController.text,
+              plastik: plastikController.text,
+              kertas: kertasController.text,
+              logam: besiController.text,
+              kaca: kacaController.text),
+        ),
+      );
 
       setState(() {
         isLoading = false;
@@ -237,101 +240,6 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
       );
     }
 
-    // NASABAH
-    Widget nasabahInput() {
-      return Container(
-        margin: EdgeInsets.only(top: 30),
-        child: Row(
-          children: [
-            Image.asset(
-              'assets/icon_nasabah.png',
-              width: 24,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Container(
-                child: TypeAheadFormField(
-                  textFieldConfiguration: TextFieldConfiguration(
-                    controller: nasabahController,
-                    decoration: InputDecoration(
-                      labelText: 'Nasabah',
-                      labelStyle: primaryTextStyle.copyWith(
-                        fontSize: 14,
-                        fontWeight: semiBold,
-                      ),
-                      hintText: "Masukkan Nasabah",
-                      hintStyle: secondaryTextStyle.copyWith(
-                        fontSize: 10,
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: primaryColor),
-                      ),
-                    ),
-                  ),
-                  suggestionsCallback: (pattern) => nasabah.where(
-                    (item) => item.toLowerCase().contains(
-                          pattern.toLowerCase(),
-                        ),
-                  ),
-                  itemBuilder: (context, String item) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 30),
-                      child: ListTile(
-                        leading: ClipOval(
-                          child: Image.asset(
-                            'assets/icon_profile_default.png',
-                            width: 35,
-                          ),
-                        ),
-                        title: Text(
-                          item,
-                          style: primaryTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: semiBold,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'Jalan Pratu Praupan Sukasada Pratu Praupan Sukasada',
-                          style: secondaryTextStyle.copyWith(
-                            fontSize: 10,
-                            fontWeight: light,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    );
-                  },
-                  noItemsFoundBuilder: (context) => Container(
-                      height: 50,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 5,
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Nasabah tidak ditemukan',
-                          style: secondaryTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: semiBold,
-                          ),
-                        ),
-                      )),
-                  transitionBuilder: (context, suggestionsBox, controller) {
-                    return suggestionsBox;
-                  },
-                  onSuggestionSelected: (String value) {
-                    nasabahController.text = value;
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
-      );
-    }
-
     // TABUNGAN TITLE
     Widget tabunganTitle() {
       return Container(
@@ -392,7 +300,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
           title: 'Besi',
           hint: 'Jumlah Sampah Besi',
           icon: 'assets/icon_ts_besi.png',
-          controller: organikController,
+          controller: besiController,
         ),
       );
     }
@@ -405,7 +313,7 @@ class _SampahTerpilahScreenState extends State<SampahTerpilahScreen> {
           title: 'Pecah belah',
           hint: 'Jumlah Sampah Pecah belah',
           icon: 'assets/icon_ts_kaca.png',
-          controller: organikController,
+          controller: kacaController,
         ),
       );
     }

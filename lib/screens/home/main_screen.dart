@@ -1,6 +1,11 @@
 import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/providers/all_perjalanan_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/providers/notification_provider.dart';
 import 'package:ewaste/providers/page_provider.dart';
+import 'package:ewaste/providers/perjalanan_provider.dart';
+import 'package:ewaste/providers/tabungan_provider.dart';
+import 'package:ewaste/providers/transaksi_provider.dart';
 import 'package:ewaste/screens/home/home_screen.dart';
 import 'package:ewaste/screens/home/input_sampah_screen.dart';
 import 'package:ewaste/screens/home/pesan_screen.dart';
@@ -28,7 +33,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int currentIndex = 0;
-  bool isPetugas = true;
+  bool isPetugas = false;
 
   @override
   void initState() {
@@ -71,6 +76,13 @@ class _MainScreenState extends State<MainScreen> {
       // Navigation to
     });
 
+    // SET PROVIDER
+    Provider.of<TransaksiProvider>(context, listen: false).getTransaksi();
+    Provider.of<NotificationProvider>(context, listen: false).getNotification();
+    Provider.of<TabunganProvider>(context, listen: false).getTabungan();
+    Provider.of<PerjalananProvider>(context, listen: false).getperjalanan();
+    Provider.of<AllPerjalananProvider>(context, listen: false).getperjalanan();
+
     subscribe();
     super.initState();
   }
@@ -85,105 +97,170 @@ class _MainScreenState extends State<MainScreen> {
     // PAGE PROVIDER
     PageProvider pageProvider = Provider.of<PageProvider>(context);
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    PerjalananProvider perjalananProvider =
+        Provider.of<PerjalananProvider>(context);
     UserModel user = authProvider.user;
 
+    var isTugas = false;
+
     setState(() {
+      // SET TUGAS
+      if (perjalananProvider.perjalanan.length > 0) {
+        if (perjalananProvider.perjalanan.first.status == 'DIKERJAKAN') {
+          isTugas = true;
+          if (perjalananProvider.perjalanan.first.waktuSelesai != null) {
+            isTugas = false;
+          }
+        }
+      }
+
       currentIndex = widget.pageIndex;
-      if (user.roles != 'PETUGAS') {
-        isPetugas = false;
-      } else if (user.roles != 'ADMIN') {
-        isPetugas = false;
+      if (user.roles == 'PETUGAS') {
+        isPetugas = true;
+      } else if (user.roles == 'ADMIN') {
+        isPetugas = true;
       }
     });
 
     // SHOW BOTTOM SHEET
-    void showBottomSheet() => showModalBottomSheet(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
+    void showBottomSheet() => isTugas == true
+        ? showModalBottomSheet(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
             ),
-          ),
-          context: context,
-          builder: (context) => Container(
-            height: 170,
-            padding: EdgeInsets.symmetric(
-              horizontal: 30,
-              vertical: 20,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Cari nasabah dengan',
-                  style: darkGreenTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: semiBold,
+            context: context,
+            builder: (context) => Container(
+              height: 170,
+              padding: EdgeInsets.symmetric(
+                horizontal: 30,
+                vertical: 20,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Cari nasabah dengan',
+                    style: darkGreenTextStyle.copyWith(
+                      fontSize: 14,
+                      fontWeight: semiBold,
+                    ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/qr-scan');
-                  },
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icon_qr_code.svg',
-                        width: 30,
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Scan dengan QR code',
-                          style: primaryTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: regular,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/qr-scan');
+                    },
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icon_qr_code.svg',
+                          width: 30,
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Scan dengan QR code',
+                            style: primaryTextStyle.copyWith(
+                              fontSize: 12,
+                              fontWeight: regular,
+                            ),
                           ),
                         ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    color: secondaryTextColor,
+                    thickness: 1,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/cari-nasabah');
+                    },
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icon_search_nasabah.svg',
+                          width: 30,
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Cari nama nasabah',
+                            style: primaryTextStyle.copyWith(
+                              fontSize: 12,
+                              fontWeight: regular,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : showModalBottomSheet(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            context: context,
+            builder: (context) => Container(
+              height: 150,
+              padding: EdgeInsets.symmetric(
+                horizontal: 30,
+                vertical: 30,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icon_info.svg',
+                        width: 24,
+                        color: redTextColor,
                       ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20,
+                      SizedBox(
+                        width: 15,
+                      ),
+                      Text(
+                        'Kamu Sedang tidak Bertugas',
+                        style: greenTextStyle.copyWith(
+                          color: redTextColor,
+                          fontSize: 14,
+                          fontWeight: semiBold,
+                        ),
                       ),
                     ],
                   ),
-                ),
-                Divider(
-                  color: secondaryTextColor,
-                  thickness: 1,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/cari-nasabah');
-                  },
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icon_search_nasabah.svg',
-                        width: 30,
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Cari nama nasabah',
-                          style: primaryTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: regular,
-                          ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                  Text(
+                    'Pastikan kamu sudah konfirmasi tugas perjalanan pada halaman beranda. Jika tugas perjalanan sudah selesai tunggu konfirmasi dari admin!',
+                    style: secondaryTextStyle.copyWith(
+                      fontSize: 12,
+                      fontWeight: regular,
+                    ),
+                    textAlign: TextAlign.justify,
+                  )
+                ],
+              ),
             ),
-          ),
-        );
+          );
 
     // FLOATING BUTTON SAMPAH
     Widget addButton() {

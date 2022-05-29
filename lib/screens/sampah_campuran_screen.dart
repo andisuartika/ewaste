@@ -1,19 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_line/dotted_line.dart';
-import 'package:ewaste/models/nasabah_model.dart';
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/screens/konfirmasi_iuran_sampah_screen.dart';
+import 'package:ewaste/services/sampah_service.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/custom_text_form_tabungan.dart';
 import 'package:ewaste/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
 
 import '../theme.dart';
 
 class SampahCampuranScreen extends StatefulWidget {
-  final NasabahModel nasabah;
+  final UserModel nasabah;
   const SampahCampuranScreen({Key? key, required this.nasabah})
       : super(key: key);
 
@@ -23,18 +23,6 @@ class SampahCampuranScreen extends StatefulWidget {
 
 class _SampahCampuranScreenState extends State<SampahCampuranScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  List<String> nasabah = [
-    'Andi Suartika',
-    'Kadek Wibawa',
-    'Putu Purnama',
-    'Nyoman Wenten',
-    'Ketut Ardika',
-    'Melsi Oktaviani'
-  ];
-
-  TextEditingController kodeController = TextEditingController(text: '');
-  TextEditingController nasabahController = TextEditingController(text: '');
   TextEditingController campuranController = TextEditingController(text: '');
 
   bool isLoading = false;
@@ -48,7 +36,20 @@ class _SampahCampuranScreenState extends State<SampahCampuranScreen> {
       setState(() {
         isLoading = true;
       });
-      Navigator.pushNamed(context, '/konfirmasi-sampah');
+
+      double kuantitas = double.parse(campuranController.text);
+      var _sampah = await SampahService().getSampahCampuran();
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => KonfirmasiIuranSampahScreen(
+            sampah: _sampah,
+            nasabah: widget.nasabah,
+            kuantitas: kuantitas,
+          ),
+        ),
+      );
 
       setState(() {
         isLoading = false;
@@ -183,144 +184,6 @@ class _SampahCampuranScreenState extends State<SampahCampuranScreen> {
                 ],
               ),
             ),
-          ],
-        ),
-      );
-    }
-
-    // KODE PERJALANAN
-    Widget perjalananInput() {
-      return Container(
-        margin: EdgeInsets.only(top: 30),
-        child: Row(
-          children: [
-            Image.asset(
-              'assets/icon_perjalanan.png',
-              width: 24,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Container(
-                child: TextFormField(
-                  controller: kodeController,
-                  decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: primaryColor),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: secondaryTextColor,
-                      ),
-                    ),
-                    labelText: "Kode Perjalanan",
-                    labelStyle: secondaryTextStyle.copyWith(
-                      fontSize: 14,
-                      fontWeight: semiBold,
-                    ),
-                    focusColor: primaryColor,
-                    hintText: "Masukkan kode perjalanan",
-                    hintStyle: secondaryTextStyle.copyWith(fontSize: 10),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      );
-    }
-
-    // NASABAH
-    Widget nasabahInput() {
-      return Container(
-        margin: EdgeInsets.only(top: 30),
-        child: Row(
-          children: [
-            Image.asset(
-              'assets/icon_nasabah.png',
-              width: 24,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Container(
-                child: TypeAheadFormField(
-                  textFieldConfiguration: TextFieldConfiguration(
-                    controller: nasabahController,
-                    decoration: InputDecoration(
-                      labelText: 'Nasabah',
-                      labelStyle: primaryTextStyle.copyWith(
-                        fontSize: 14,
-                        fontWeight: semiBold,
-                      ),
-                      hintText: "Masukkan Nasabah",
-                      hintStyle: secondaryTextStyle.copyWith(
-                        fontSize: 10,
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: primaryColor),
-                      ),
-                    ),
-                  ),
-                  suggestionsCallback: (pattern) => nasabah.where(
-                    (item) => item.toLowerCase().contains(
-                          pattern.toLowerCase(),
-                        ),
-                  ),
-                  itemBuilder: (context, String item) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 30),
-                      child: ListTile(
-                        leading: ClipOval(
-                          child: Image.asset(
-                            'assets/icon_profile_default.png',
-                            width: 35,
-                          ),
-                        ),
-                        title: Text(
-                          item,
-                          style: primaryTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: semiBold,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'Jalan Pratu Praupan Sukasada Pratu Praupan Sukasada',
-                          style: secondaryTextStyle.copyWith(
-                            fontSize: 10,
-                            fontWeight: light,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    );
-                  },
-                  noItemsFoundBuilder: (context) => Container(
-                      height: 50,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 5,
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Nasabah tidak ditemukan',
-                          style: secondaryTextStyle.copyWith(
-                            fontSize: 12,
-                            fontWeight: semiBold,
-                          ),
-                        ),
-                      )),
-                  transitionBuilder: (context, suggestionsBox, controller) {
-                    return suggestionsBox;
-                  },
-                  onSuggestionSelected: (String value) {
-                    nasabahController.text = value;
-                  },
-                ),
-              ),
-            )
           ],
         ),
       );

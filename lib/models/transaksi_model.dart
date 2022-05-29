@@ -3,7 +3,7 @@ class TransaksiModel {
   String? nasabah;
   String? petugas;
   String? perjalanan;
-  String? total;
+  int? total;
   String? jenisTransaksi;
   String? status;
   String? keterangan;

@@ -297,7 +297,7 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
                               locale: 'id',
                               symbol: 'Rp',
                               decimalDigits: 0,
-                            ).format(int.parse(user.points!)),
+                            ).format(user.points),
                       style: greenTextStyle.copyWith(
                         fontSize: 14,
                         fontWeight: semiBold,
@@ -351,7 +351,7 @@ class _TarikBankScreenState extends State<TarikBankScreen> {
                     return 'Minimal Rp50.000';
                   }
                   // POINT TIDAK CUKUP
-                  if (int.parse(value) + 2500 >= int.parse(user.points!)) {
+                  if (int.parse(value) + 2500 >= user.points!) {
                     return 'Poin anda tidak cukup *biaya admin Rp2.500';
                   }
                   return null;

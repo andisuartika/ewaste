@@ -1,11 +1,12 @@
 import 'package:ewaste/models/nasabah_model.dart';
+import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/screens/sampah_campuran_screen.dart';
 import 'package:ewaste/screens/sampah_terpilah_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:flutter/material.dart';
 
 class InputSampahScreen extends StatefulWidget {
-  final NasabahModel nasabah;
+  final UserModel nasabah;
 
   InputSampahScreen({Key? key, required this.nasabah}) : super(key: key);
 

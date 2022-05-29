@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/screens/home/main_screen.dart';
 import 'package:ewaste/theme.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/custom_text_form_field.dart';
@@ -48,7 +47,13 @@ class _LoginScreenState extends State<LoginScreen> {
         password: passwordController.text,
       )) {
         if (await authProvider.fcmToken(fcmToken: fcmToken)) {
-          Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MainScreen(
+                        pageIndex: 0,
+                      )),
+              (route) => false);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

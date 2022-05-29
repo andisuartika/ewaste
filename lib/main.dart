@@ -1,15 +1,16 @@
+import 'package:ewaste/providers/all_perjalanan_provider.dart';
 import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
 import 'package:ewaste/providers/bank_provider.dart';
 import 'package:ewaste/providers/notification_provider.dart';
 import 'package:ewaste/providers/page_provider.dart';
+import 'package:ewaste/providers/perjalanan_provider.dart';
 import 'package:ewaste/providers/sampah_provider.dart';
 import 'package:ewaste/providers/slider_provider.dart';
+import 'package:ewaste/providers/tabungan_provider.dart';
 import 'package:ewaste/providers/transaksi_provider.dart';
 import 'package:ewaste/screens/cari_nasabah_screen.dart';
 import 'package:ewaste/screens/home/main_screen.dart';
-import 'package:ewaste/screens/konfirmasi_iuran_sampah_screen.dart';
-import 'package:ewaste/screens/konfirmasi_tabungan_screen.dart';
 import 'package:ewaste/screens/profile/panduan_aplikasi_screen.dart';
 import 'package:ewaste/screens/profile/pusat_bantuan_screen.dart';
 import 'package:ewaste/screens/profile/syarat_ketentuan_screen.dart';
@@ -78,17 +79,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
-  void initState() {
-    // GET TOKEN
-    FirebaseMessaging.instance.getToken().then((newToken) {
-      print("FCM Token : ");
-      print(newToken);
-    });
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
@@ -116,6 +106,15 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => NotificationProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => TabunganProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PerjalananProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AllPerjalananProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -125,10 +124,6 @@ class _MyAppState extends State<MyApp> {
           '/register': (context) => RegisterScreen(),
           '/login': (context) => LoginScreen(),
           '/main': (context) => MainScreen(),
-          // '/sampah-terpilah': (context) => SampahTerpilahScreen(),
-          // '/sampah-campuran': (context) => SampahCampuranScreen(),
-          '/konfirmasi-tabungan': (context) => KonfirmasiTabunganScreen(),
-          '/konfirmasi-sampah': (context) => KonfirmasiIuranSampahScreen(),
           '/ubah-profile': (context) => UbahProfileScreen(),
           '/ubah-password': (context) => UbahPasswordScreen(),
           '/versi-aplikasi': (context) => VersiAplikasiScreen(),

@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:ewaste/faker/slider_faker.dart';
-import 'package:ewaste/models/slider_model.dart';
 import 'package:ewaste/models/user_model.dart';
 import 'package:ewaste/providers/article_provider.dart';
 import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/providers/perjalanan_provider.dart';
 import 'package:ewaste/providers/sampah_provider.dart';
 import 'package:ewaste/providers/slider_provider.dart';
+import 'package:ewaste/screens/detail_tugas_perjalanan_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:ewaste/screens/webview_screen.dart';
 import 'package:ewaste/theme.dart';
@@ -32,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -42,6 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
     ArticleProvider articleProvider = Provider.of<ArticleProvider>(context);
     SampahProvider sampahProvider = Provider.of<SampahProvider>(context);
     SliderProvider sliderProvider = Provider.of<SliderProvider>(context);
+    PerjalananProvider perjalananProvider =
+        Provider.of<PerjalananProvider>(context);
     RefreshController refreshController = RefreshController();
 
     // REFRESH
@@ -50,9 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
       await Future.delayed(Duration(milliseconds: 10));
       Provider.of<AuthProvider>(context, listen: false).getUser(user.token);
       Provider.of<ArticleProvider>(context, listen: false).getArticles();
-
       Provider.of<SampahProvider>(context, listen: false).getSampah();
-
+      Provider.of<PerjalananProvider>(context, listen: false).getperjalanan();
       // if failed,use refreshFailed()
       refreshController.refreshCompleted();
     }
@@ -173,6 +173,53 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
 
+    // PETUGAS
+    Widget petugas() {
+      return Container(
+        width: double.infinity,
+        height: 50,
+        margin: EdgeInsets.only(
+          right: 30,
+          left: 30,
+          top: 10,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: primaryColor,
+        ),
+        child: Row(
+          children: [
+            Image.asset('assets/icon_pengangkutan_sampah.png'),
+            SizedBox(width: 20),
+            Expanded(
+              child: Text(
+                perjalananProvider.perjalanan[0].kode.toString(),
+                style: whiteTextStyle,
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailTugasPerjalananScreen(
+                      perjalanan: perjalananProvider.perjalanan.first,
+                    ),
+                  ),
+                );
+              },
+              child: SvgPicture.asset(
+                'assets/icon_arrow_right.svg',
+                color: whiteColor,
+                width: 20,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     // CONTAINER SALDO
     Widget saldo() {
       return Container(
@@ -216,17 +263,21 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 5,
               ),
-              Text(
-                user.points == null
-                    ? "Rp0"
-                    : NumberFormat.currency(
-                        locale: 'id',
-                        symbol: 'Rp',
-                        decimalDigits: 0,
-                      ).format(int.parse(user.points!)),
-                style: whiteTextStyle.copyWith(
-                  fontSize: 30,
-                  fontWeight: semiBold,
+              Consumer<AuthProvider>(
+                builder: (context, value, child) => Text(
+                  user.points == null
+                      ? "Rp0"
+                      : NumberFormat.currency(
+                          locale: 'id',
+                          symbol: 'Rp',
+                          decimalDigits: 0,
+                        ).format(
+                          authProvider.user.points,
+                        ),
+                  style: whiteTextStyle.copyWith(
+                    fontSize: 30,
+                    fontWeight: semiBold,
+                  ),
                 ),
               ),
               Container(
@@ -318,15 +369,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Container(
               margin: EdgeInsets.all(15),
-              child: CarouselSlider.builder(
-                itemCount: isLoading ? 3 : sliderProvider.sliders.length,
+              child: CarouselSlider(
                 options: CarouselOptions(
                   aspectRatio: 2.5,
                   enlargeCenterPage: true,
                   autoPlay: true,
                 ),
-                itemBuilder: (context, i, id) {
-                  //for onTap to redirect to another screen
+                items: sliderProvider.sliders.map((i) {
                   return GestureDetector(
                     child: Container(
                       decoration: BoxDecoration(
@@ -347,8 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   highlightColor: Colors.grey.shade100,
                                 )
                               : CachedNetworkImage(
-                                  imageUrl: sliderProvider.sliders[i].image
-                                      .toString(),
+                                  imageUrl: i.image.toString(),
                                   height: 150,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) =>
@@ -370,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: isLoading
                         ? () {}
                         : () {
-                            var url = sliderProvider.sliders[i].url;
+                            var url = i.url;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -384,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             print(url.toString());
                           },
                   );
-                },
+                }).toList(),
               ),
             ),
           ],
@@ -434,6 +482,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    perjalananProvider.perjalanan.length > 0
+                        ? petugas()
+                        : SizedBox(),
                     saldo(),
                     jenisSampah(),
                     slider(),

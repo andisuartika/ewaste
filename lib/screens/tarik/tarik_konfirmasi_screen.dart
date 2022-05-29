@@ -135,7 +135,7 @@ class _TarikKonfirmasiScreenState extends State<TarikKonfirmasiScreen> {
         nama: widget.name,
         nomor: widget.norek,
         bank: widget.idBank,
-        jumlah: widget.nominal,
+        jumlah: widget.nominal + 2500,
         password: passController.text,
       )) {
         showSuccessDialog();

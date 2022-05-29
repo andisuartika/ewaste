@@ -1,12 +1,34 @@
+import 'package:ewaste/models/sampah_model.dart';
+import 'package:ewaste/models/user_model.dart';
+import 'package:ewaste/providers/auth_provider.dart';
+import 'package:ewaste/providers/perjalanan_provider.dart';
+import 'package:ewaste/providers/sampah_provider.dart';
+import 'package:ewaste/services/transaksi_service.dart';
 import 'package:ewaste/widgets/custom_button.dart';
 import 'package:ewaste/widgets/detail_transaksi_item.dart';
 import 'package:ewaste/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../theme.dart';
 
 class KonfirmasiTabunganScreen extends StatefulWidget {
-  const KonfirmasiTabunganScreen({Key? key}) : super(key: key);
+  final UserModel nasabah;
+  final String organik;
+  final String plastik;
+  final String kertas;
+  final String logam;
+  final String kaca;
+  const KonfirmasiTabunganScreen({
+    Key? key,
+    required this.nasabah,
+    required this.organik,
+    required this.plastik,
+    required this.kertas,
+    required this.logam,
+    required this.kaca,
+  }) : super(key: key);
 
   @override
   State<KonfirmasiTabunganScreen> createState() =>
@@ -18,6 +40,32 @@ class _KonfirmasiTabunganScreenState extends State<KonfirmasiTabunganScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    SampahProvider sampahProvider = Provider.of<SampahProvider>(context);
+    PerjalananProvider perjalananProvider =
+        Provider.of<PerjalananProvider>(context);
+
+    double organik = double.parse(widget.organik);
+    double plastik = double.parse(widget.plastik);
+    double kertas = double.parse(widget.kertas);
+    double logam = double.parse(widget.logam);
+    double kaca = double.parse(widget.kaca);
+
+    int hargaOrganik = int.parse(sampahProvider.sampah[0].harga.toString());
+    int hargaPlastik = int.parse(sampahProvider.sampah[1].harga.toString());
+    int hargaKertas = int.parse(sampahProvider.sampah[2].harga.toString());
+    int hargaLogam = int.parse(sampahProvider.sampah[3].harga.toString());
+    int hargaKaca = int.parse(sampahProvider.sampah[4].harga.toString());
+
+    double totalOrganik = organik * hargaOrganik;
+    double totalPlastik = plastik * hargaPlastik;
+    double totalKertas = kertas * hargaKertas;
+    double totalLogam = logam * hargaLogam;
+    double totalKaca = kaca * hargaKaca;
+
+    double total =
+        totalOrganik + totalPlastik + totalKertas + totalLogam + totalKaca;
+
     Future<void> showSuccessDialog() async {
       return showDialog(
         context: context,
@@ -102,7 +150,50 @@ class _KonfirmasiTabunganScreenState extends State<KonfirmasiTabunganScreen> {
       setState(() {
         isLoading = true;
       });
-      showSuccessDialog();
+
+      // SET DATA TO API
+      var item = [
+        {
+          'sampah': 1,
+          'kuantitas': organik,
+        },
+        {
+          'sampah': 2,
+          'kuantitas': plastik,
+        },
+        {
+          'sampah': 3,
+          'kuantitas': kertas,
+        },
+        {
+          'sampah': 4,
+          'kuantitas': logam,
+        },
+        {
+          'sampah': 5,
+          'kuantitas': kaca,
+        },
+      ];
+
+      if (await TransaksiService().transaksiTabungan(
+        idNasabah: widget.nasabah.id!,
+        item: item,
+        idPerjalanan: perjalananProvider.perjalanan.first.id!,
+        jenisTransaksi: 'TRANSAKSI MASUK',
+        total: total.toInt(),
+      )) {
+        showSuccessDialog();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: redTextColor,
+            content: Text(
+              'Transaksi Gagal dilakukan!',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
 
       setState(() {
         isLoading = false;
@@ -153,7 +244,7 @@ class _KonfirmasiTabunganScreenState extends State<KonfirmasiTabunganScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Putu Andi Suartika',
+                      widget.nasabah.name.toString(),
                       style: secondaryTextStyle.copyWith(
                         fontSize: 12,
                         fontWeight: semiBold,
@@ -162,7 +253,7 @@ class _KonfirmasiTabunganScreenState extends State<KonfirmasiTabunganScreen> {
                     Container(
                       width: 200,
                       child: Text(
-                        'Jalan Pratu Praupan Sangket Sukasada Buleleng Bali',
+                        widget.nasabah.alamat.toString(),
                         style: secondaryTextStyle.copyWith(
                           fontSize: 10,
                           fontWeight: light,
@@ -195,7 +286,7 @@ class _KonfirmasiTabunganScreenState extends State<KonfirmasiTabunganScreen> {
               ),
             ),
             Text(
-              'Komang Artawan',
+              authProvider.user.name.toString(),
               style: secondaryTextStyle.copyWith(
                 fontSize: 12,
                 fontWeight: semiBold,
@@ -224,33 +315,33 @@ class _KonfirmasiTabunganScreenState extends State<KonfirmasiTabunganScreen> {
             SizedBox(height: 15),
             DetailTransaksiItem(
               sampah: 'Organik',
-              jumlah: 5,
-              harga: 250,
-              total: 1250,
+              jumlah: organik,
+              harga: hargaOrganik,
+              total: organik * hargaOrganik,
             ),
             DetailTransaksiItem(
               sampah: 'Plastik',
-              jumlah: 10,
-              harga: 2000,
-              total: 20000,
+              jumlah: plastik,
+              harga: hargaPlastik,
+              total: plastik * hargaPlastik,
             ),
             DetailTransaksiItem(
               sampah: 'Kertas',
-              jumlah: 3,
-              harga: 1500,
-              total: 4500,
+              jumlah: kertas,
+              harga: hargaKertas,
+              total: kertas * hargaKertas,
             ),
             DetailTransaksiItem(
               sampah: 'Besi',
-              jumlah: 15,
-              harga: 1600,
-              total: 24000,
+              jumlah: logam,
+              harga: hargaLogam,
+              total: logam * hargaLogam,
             ),
             DetailTransaksiItem(
               sampah: 'Pecah Belah',
-              jumlah: 5,
-              harga: 500,
-              total: 2500,
+              jumlah: kaca,
+              harga: hargaKaca,
+              total: kaca * hargaKaca,
             ),
             Divider(
               thickness: 1,
@@ -269,7 +360,11 @@ class _KonfirmasiTabunganScreenState extends State<KonfirmasiTabunganScreen> {
                   ),
                 ),
                 Text(
-                  'Rp 52.250',
+                  NumberFormat.currency(
+                    locale: 'id',
+                    symbol: 'Rp ',
+                    decimalDigits: 0,
+                  ).format(total),
                   style: primaryTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: medium,

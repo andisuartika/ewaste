@@ -45,7 +45,7 @@ class _PusatBantuanScreenState extends State<PusatBantuanScreen> {
             ),
             SizedBox(height: 5),
             Text(
-              'Butuh bantuan? jika kamu mengalami kendala saat pemakaian aplikasi E-Waste bisa kamu tanyakan pada kamu melalui salah satu platform berikut ya!',
+              'Butuh bantuan? jika kamu mengalami kendala saat pemakaian aplikasi E-Waste bisa kamu tanyakan pada kami melalui salah satu platform berikut ya!',
               style: secondaryTextStyle.copyWith(
                 fontSize: 14,
                 fontWeight: light,
@@ -128,7 +128,7 @@ class _PusatBantuanScreenState extends State<PusatBantuanScreen> {
         backgroundColor: primaryColor,
         centerTitle: true,
         title: Text(
-          'Panduan Aplikasi',
+          'Pusat Bantuan',
           style: whiteTextStyle.copyWith(
             fontSize: 16,
             fontWeight: semiBold,

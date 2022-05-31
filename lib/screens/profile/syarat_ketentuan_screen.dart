@@ -35,7 +35,7 @@ class SyaratdanKetentuanScreen extends StatelessWidget {
             ),
             SizedBox(height: 15),
             Text(
-              'Syarat dan Ketntuan ini mengatur pemakian dan akses pengguna terhadap aplikasi, website, konten yang disediakan oleh E-Waste. Dengan mengakses atau menggunakan aplikasi layanan E-Waste, Pengguna setuju dan mematuhi “Syarat dan ketentuan Aplikasi E-Waste.',
+              'Syarat dan Ketentuan ini mengatur pemakaian dan akses pengguna terhadap aplikasi, website, konten yang disediakan oleh E-Waste. Dengan mengakses atau menggunakan aplikasi layanan E-Waste, Pengguna setuju dan mematuhi “Syarat dan ketentuan Aplikasi E-Waste.',
               style: secondaryTextStyle.copyWith(
                 fontSize: 14,
                 fontWeight: light,
@@ -136,7 +136,7 @@ class SyaratdanKetentuanScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         centerTitle: true,
         title: Text(
-          'Panduan Aplikasi',
+          'Syarat dan Ketentuan',
           style: whiteTextStyle.copyWith(
             fontSize: 16,
             fontWeight: semiBold,
